@@ -6,19 +6,10 @@
 <title>ערב חברתי בסימן מושיק</title>
 <link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@400;700;900&family=Frank+Ruhl+Libre:wght@700;900&family=Heebo:wght@700;900&family=Varela+Round&family=Pacifico&display=swap" rel="stylesheet">
 <style>
-:root{
-  --wine:#5a0000;--wine2:#3d0000;
-  --gold:#D4A017;--gold2:#F5C518;--gold3:#FDE98A;
-  --cream:#FFF8E7;--silver:#C0B090;
-  --olive:#4A5E2A;--olive2:#627A37;--radius:12px;
-}
+:root{--wine:#5a0000;--wine2:#3d0000;--gold:#D4A017;--gold2:#F5C518;--gold3:#FDE98A;--cream:#FFF8E7;--silver:#C0B090;--olive:#4A5E2A;--olive2:#627A37;--radius:12px;}
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{width:100%;height:100%;overflow:hidden;direction:rtl;font-family:'Secular One',sans-serif;}
-body{
-  background:
-    repeating-linear-gradient(90deg,rgba(0,0,0,.12) 0,rgba(0,0,0,.12) 1px,transparent 1px,transparent 28px,rgba(0,0,0,.06) 28px,rgba(0,0,0,.06) 29px,transparent 29px,transparent 56px),
-    linear-gradient(160deg,#6b0000 0%,#3d0000 50%,#5a0000 100%);
-  color:var(--cream);}
+body{background:repeating-linear-gradient(90deg,rgba(0,0,0,.12) 0,rgba(0,0,0,.12) 1px,transparent 1px,transparent 28px,rgba(0,0,0,.06) 28px,rgba(0,0,0,.06) 29px,transparent 29px,transparent 56px),linear-gradient(160deg,#6b0000 0%,#3d0000 50%,#5a0000 100%);color:var(--cream);}
 body::before,body::after{content:'';position:fixed;top:0;width:70px;height:100vh;z-index:0;pointer-events:none;}
 body::before{right:0;background:linear-gradient(to left,#5a0000,#4a000044,transparent);}
 body::after{left:0;background:linear-gradient(to right,#5a0000,#4a000044,transparent);}
@@ -26,7 +17,6 @@ body::after{left:0;background:linear-gradient(to right,#5a0000,#4a000044,transpa
 .f-heebo *{font-family:'Heebo',sans-serif!important;}
 .f-varela *{font-family:'Varela Round',sans-serif!important;}
 .f-rubik *{font-family:'Rubik',sans-serif!important;}
-
 .screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-y:auto;padding:20px;z-index:1;}
 .screen.hidden{display:none!important;}
 .box{width:100%;max-width:560px;background:rgba(0,0,0,.45);border:2px solid rgba(212,160,23,.35);border-radius:var(--radius);padding:22px 20px;}
@@ -67,7 +57,7 @@ textarea{resize:vertical;min-height:56px;}
 .fp-btn span{display:block;font-size:16px;margin-bottom:1px;}
 .saved-badge{font-size:11px;color:#B8CC8A;opacity:.7;text-align:center;margin-top:5px;}
 
-/* ═══════════════════ GAME ═══════════════════ */
+/* GAME */
 #game{flex-direction:column;align-items:stretch;justify-content:flex-start;padding:0;overflow:hidden;display:flex;height:100%;}
 .game-header{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:5px 14px;background:rgba(0,0,0,.55);border-bottom:2px solid rgba(212,160,23,.2);min-height:42px;}
 .game-hdr-title{font-family:'Pacifico',cursive;font-size:clamp(12px,1.8vw,18px);color:var(--gold2);}
@@ -86,78 +76,35 @@ textarea{resize:vertical;min-height:56px;}
 @keyframes splashPop{0%{transform:scale(0) rotate(-18deg);opacity:0;}65%{transform:scale(1.15) rotate(5deg);opacity:1;}100%{transform:scale(1) rotate(0deg);opacity:1;}}
 .splash-name{font-family:'Pacifico',cursive;font-size:clamp(32px,8vw,72px);color:var(--gold2);text-shadow:0 0 40px rgba(212,160,23,.8),3px 3px 0 rgba(0,0,0,.6);text-align:center;animation:splashPop .55s cubic-bezier(.34,1.56,.64,1) forwards;}
 
-/* TICKET ROW */
+/* TICKET */
 .top-row{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;flex-shrink:0;}
 .ticket-lights{display:flex;align-items:center;gap:0;}
 .tl{width:7px;height:7px;border-radius:50%;background:var(--gold2);margin:0 5px;animation:tla 1.4s ease-in-out infinite alternate;display:inline-block;}
 .tl:nth-child(2n){animation-delay:.3s;}.tl:nth-child(3n){animation-delay:.6s;}.tl:nth-child(4n){animation-delay:.9s;}
 @keyframes tla{from{opacity:.3;box-shadow:0 0 2px var(--gold);}to{opacity:1;box-shadow:0 0 7px var(--gold2),0 0 14px var(--gold);}}
-
-/* ── GOLDEN YELLOW TICKET (like the image) ── */
-.ticket{
-  background:linear-gradient(160deg,#FFE566 0%,#F5C518 45%,#E8A020 100%);
-  border-radius:10px;
-  padding:5px 22px 5px;
-  text-align:center;
-  border:2px solid rgba(100,50,0,.4);
-  box-shadow:0 4px 16px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.5),0 0 20px rgba(245,197,24,.25);
-  min-width:clamp(160px,28vw,340px);
-  animation:tglow 2s ease-in-out infinite;
-}
+.ticket{background:linear-gradient(160deg,#FFE566 0%,#F5C518 45%,#E8A020 100%);border-radius:10px;padding:5px 22px 5px;text-align:center;border:2px solid rgba(100,50,0,.4);box-shadow:0 4px 16px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.5),0 0 20px rgba(245,197,24,.25);min-width:clamp(160px,28vw,340px);animation:tglow 2s ease-in-out infinite;}
 @keyframes tglow{0%,100%{box-shadow:0 4px 18px rgba(0,0,0,.5),0 0 18px rgba(245,197,24,.15);}50%{box-shadow:0 4px 22px rgba(0,0,0,.5),0 0 35px rgba(245,197,24,.4);}}
 .ticket-stars{font-size:8px;color:rgba(80,30,0,.5);letter-spacing:4px;margin-bottom:1px;}
 .ticket-lbl{font-size:clamp(7px,.75vw,9px);font-weight:700;color:rgba(80,30,0,.45);letter-spacing:2px;text-transform:uppercase;margin-bottom:1px;}
-.ticket-name{
-  font-family:'Pacifico',cursive;
-  font-size:clamp(22px,4vw,50px);
-  color:#5a0000;
-  text-shadow:2px 2px 0 rgba(0,0,0,.2);
-  line-height:1.0;
-  letter-spacing:-0.5px;
-}
+.ticket-name{font-family:'Pacifico',cursive;font-size:clamp(22px,4vw,50px);color:#5a0000;text-shadow:2px 2px 0 rgba(0,0,0,.2);line-height:1.0;letter-spacing:-0.5px;}
 .ticket-name.picking{color:rgba(90,0,0,.2);font-size:clamp(20px,3vw,36px);}
-
-/* side action btn */
-.side-btn{font-size:clamp(10px,1.2vw,13px);padding:7px 12px;border-radius:10px;border:2px solid rgba(212,160,23,.35);background:rgba(0,0,0,.4);color:var(--gold3);cursor:pointer;font-family:inherit;font-weight:700;transition:all .2s;white-space:nowrap;text-align:center;}
-.side-btn.reveal{border-color:var(--olive2);color:#B8CC8A;background:rgba(74,94,42,.25);}
-.side-btn.song-btn{border-color:#4a90d9;color:#a0c8f0;background:rgba(41,74,128,.25);}
-.side-btn:hover{transform:translateY(-1px);}
-
-/* NEXT PLAYER BTN (in bottom row when no player) */
 .next-btn{font-family:'Pacifico',cursive;font-size:clamp(13px,2vw,22px);padding:clamp(8px,1.3vw,14px) 26px;background:linear-gradient(135deg,#5a0000,#8b0000);color:var(--gold2);border:2px solid var(--gold);border-radius:50px;cursor:pointer;box-shadow:0 4px 0 #2a0000;transition:all .15s;animation:rp 2.5s ease-in-out infinite;}
 .next-btn:hover{transform:translateY(-2px);}
 .next-btn:active{transform:translateY(2px);}
 @keyframes rp{50%{box-shadow:0 4px 0 #2a0000,0 7px 28px rgba(100,0,0,.5);}}
 
-/* WHEEL – maximum size, click to spin */
+/* WHEEL */
 .wheel-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:0;}
-.wheel-ring{
-  display:inline-block;padding:8px;border-radius:50%;
-  background:radial-gradient(circle,#5a0000,#2a0000);
-  border:3px solid var(--gold);
-  box-shadow:0 0 0 5px rgba(212,160,23,.18),0 0 60px rgba(212,160,23,.1);
-  cursor:default;transition:transform .15s, box-shadow .3s;
-}
-.wheel-ring.clickable{
-  cursor:pointer;
-  animation:wheelPulse 1.8s ease-in-out infinite;
-}
+.wheel-ring{display:inline-block;padding:8px;border-radius:50%;background:radial-gradient(circle,#5a0000,#2a0000);border:3px solid var(--gold);box-shadow:0 0 0 5px rgba(212,160,23,.18),0 0 60px rgba(212,160,23,.1);cursor:default;transition:transform .15s,box-shadow .3s;}
+.wheel-ring.clickable{cursor:pointer;animation:wheelPulse 1.8s ease-in-out infinite;}
 @keyframes wheelPulse{0%,100%{box-shadow:0 0 0 5px rgba(212,160,23,.18),0 0 50px rgba(212,160,23,.1);}50%{box-shadow:0 0 0 9px rgba(212,160,23,.35),0 0 70px rgba(212,160,23,.3);}}
 .wheel-ring.clickable:hover{transform:scale(1.012);}
 .wheel-ring.spinning-ring{cursor:default;animation:none;transform:none!important;}
 #wc{display:block;border-radius:50%;}
 .wheel-hint{font-size:clamp(10px,1.3vw,13px);color:rgba(212,160,23,.55);letter-spacing:1px;text-align:center;min-height:14px;font-weight:700;}
-
-/* bottom row: next player btn or reveal hint */
 .bottom-row{width:100%;display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;padding:4px 0 6px;}
 
-/* OVERLAYS */
-.mult-overlay{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.8);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
-.mult-overlay.hidden{display:none!important;}
-.mult-title-txt{font-family:'Pacifico',cursive;font-size:clamp(18px,3.5vw,32px);color:var(--gold3);letter-spacing:2px;}
-.mult-number{font-family:'Pacifico',cursive;font-size:clamp(70px,15vw,140px);color:var(--gold2);text-shadow:0 0 40px var(--gold2),0 0 80px var(--gold);animation:mn .4s ease-in-out infinite alternate;line-height:1;}
-@keyframes mn{from{transform:scale(.95);}to{transform:scale(1.05);}}
-.mult-points{font-size:clamp(16px,2.5vw,24px);color:var(--cream);text-align:center;}
+/* Q OVERLAY */
 .q-overlay{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
 .q-overlay.hidden{display:none!important;}
 .q-frame{width:100%;max-width:680px;background:rgba(0,0,0,.65);border:3px solid var(--gold);border-radius:16px;padding:clamp(18px,2.5vw,32px) clamp(18px,3.5vw,44px);position:relative;animation:popIn .35s cubic-bezier(.34,1.56,.64,1);}
@@ -165,16 +112,55 @@ textarea{resize:vertical;min-height:56px;}
 .q-frame-bulbs{position:absolute;inset:-8px;border-radius:20px;pointer-events:none;}
 .qb{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--gold2);animation:qbl 1.3s ease-in-out infinite alternate;}
 @keyframes qbl{from{opacity:.3;box-shadow:0 0 2px var(--gold);}to{opacity:1;box-shadow:0 0 8px var(--gold2),0 0 18px var(--gold);}}
-.q-badge{display:inline-block;border-radius:30px;padding:5px 18px;margin-bottom:10px;font-size:clamp(12px,1.8vw,17px);background:linear-gradient(135deg,#5a0000,#8b0000);color:var(--gold2);border:1px solid var(--gold);}
+.q-badge{display:inline-block;border-radius:30px;padding:5px 18px;margin-bottom:6px;font-size:clamp(12px,1.8vw,17px);background:linear-gradient(135deg,#5a0000,#8b0000);color:var(--gold2);border:1px solid var(--gold);}
+.pts-badge{font-family:'Pacifico',cursive;font-size:clamp(14px,2vw,22px);color:var(--gold2);text-align:center;margin-bottom:10px;}
 .q-text{font-size:clamp(17px,3.2vw,36px);line-height:1.5;color:var(--cream);text-shadow:1px 1px 0 rgba(0,0,0,.4);margin-bottom:18px;text-align:center;}
-.q-actions{display:flex;gap:12px;justify-content:center;}
-.btn-done{font-family:'Pacifico',cursive;font-size:clamp(14px,2.2vw,20px);padding:11px 28px;background:linear-gradient(135deg,#1B5E20,#2E7D32);color:var(--gold3);border:2px solid rgba(212,160,23,.3);border-radius:50px;cursor:pointer;box-shadow:0 4px 0 #0a3010;transition:all .15s;}
+.q-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.btn-done{font-family:'Pacifico',cursive;font-size:clamp(13px,2vw,18px);padding:11px 24px;background:linear-gradient(135deg,#1B5E20,#2E7D32);color:var(--gold3);border:2px solid rgba(212,160,23,.3);border-radius:50px;cursor:pointer;box-shadow:0 4px 0 #0a3010;transition:all .15s;}
 .btn-done:hover{transform:translateY(-2px);}
-.btn-skip{font-family:'Pacifico',cursive;font-size:clamp(13px,1.8vw,17px);padding:11px 22px;background:rgba(0,0,0,.4);color:var(--silver);border:1px solid rgba(255,255,255,.2);border-radius:50px;cursor:pointer;transition:all .15s;}
+.btn-double{font-family:'Pacifico',cursive;font-size:clamp(11px,1.6vw,15px);padding:11px 18px;background:linear-gradient(135deg,#7B1FA2,#9C27B0);color:#fff;border:2px solid rgba(200,100,255,.35);border-radius:50px;cursor:pointer;box-shadow:0 4px 0 #4a0072;transition:all .15s;}
+.btn-double:hover{transform:translateY(-2px);}
+.btn-skip{font-family:'Pacifico',cursive;font-size:clamp(12px,1.6vw,16px);padding:11px 20px;background:rgba(0,0,0,.4);color:var(--silver);border:1px solid rgba(255,255,255,.2);border-radius:50px;cursor:pointer;transition:all .15s;}
 .btn-skip:hover{background:rgba(255,100,100,.15);color:#f99;}
 .points-popup{position:fixed;z-index:100;left:50%;top:50%;transform:translate(-50%,-50%);font-family:'Pacifico',cursive;font-size:clamp(36px,8vw,80px);color:var(--gold2);text-shadow:0 0 30px var(--gold2),0 0 60px var(--gold);pointer-events:none;animation:ptop 1.8s ease-out forwards;}
 @keyframes ptop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5);}20%{opacity:1;transform:translate(-50%,-50%) scale(1.2);}60%{opacity:1;transform:translate(-50%,-65%) scale(1);}100%{opacity:0;transform:translate(-50%,-85%) scale(.8);}}
 
+/* STEAL BANNER */
+.steal-banner{position:fixed;top:0;left:0;right:0;z-index:60;background:linear-gradient(135deg,#7B0000,#B71C1C);padding:10px 16px;text-align:center;animation:bannerDrop .4s cubic-bezier(.34,1.56,.64,1);}
+.steal-banner.hidden{display:none!important;}
+@keyframes bannerDrop{from{transform:translateY(-100%);}to{transform:translateY(0);}}
+.steal-banner-txt{font-family:'Pacifico',cursive;font-size:clamp(13px,2.2vw,20px);color:var(--gold2);margin-bottom:7px;}
+.steal-banner-btns{display:flex;gap:10px;justify-content:center;}
+
+/* STEAL OVERLAY */
+.big-overlay{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:12px;}
+.big-overlay.hidden{display:none!important;}
+.overlay-title{font-family:'Pacifico',cursive;font-size:clamp(20px,4vw,34px);text-align:center;}
+.steal-list{display:flex;flex-direction:column;gap:7px;width:100%;max-width:480px;max-height:42vh;overflow-y:auto;}
+.steal-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(123,0,0,.3);border:1px solid rgba(255,82,82,.2);border-radius:10px;cursor:pointer;transition:all .2s;}
+.steal-item:hover,.steal-item.sel{background:rgba(183,28,28,.45);border-color:#FF5252;}
+.steal-item-name{flex:1;font-size:15px;}
+.steal-item-score{font-family:'Pacifico',cursive;font-size:13px;color:var(--gold3);}
+.steal-range-row{display:flex;align-items:center;gap:10px;width:100%;max-width:480px;}
+.steal-range-row input[type=range]{flex:1;accent-color:#FF5252;}
+.steal-amt{font-family:'Pacifico',cursive;font-size:20px;color:#FF5252;min-width:48px;text-align:center;}
+.overlay-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+
+/* SONG ID OVERLAY */
+.song-id-list{display:flex;flex-direction:column;gap:6px;width:100%;max-width:520px;max-height:40vh;overflow-y:auto;}
+.song-id-item{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(0,96,100,.25);border:1px solid rgba(0,188,212,.18);border-radius:10px;}
+.song-id-name{flex:1;font-size:14px;}
+.btn-play{background:linear-gradient(135deg,#006064,#00838F);color:#fff;border:none;border-radius:20px;padding:5px 13px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;}
+.btn-stop{background:rgba(183,28,28,.6);color:#fff;border:none;border-radius:20px;padding:5px 13px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:none;}
+.btn-teal{font-family:'Pacifico',cursive;font-size:clamp(13px,2vw,17px);padding:10px 22px;background:linear-gradient(135deg,#006064,#00838F);color:#fff;border:2px solid rgba(0,188,212,.3);border-radius:50px;cursor:pointer;box-shadow:0 3px 0 #003740;transition:all .15s;}
+.btn-teal:hover{transform:translateY(-1px);}
+
+/* WINNER OVERLAY */
+.winner-list{display:flex;flex-direction:column;gap:7px;width:100%;max-width:400px;max-height:50vh;overflow-y:auto;}
+.winner-item{padding:10px 16px;background:rgba(0,0,0,.4);border:1px solid rgba(212,160,23,.2);border-radius:10px;cursor:pointer;font-size:15px;text-align:center;transition:all .2s;}
+.winner-item:hover{background:rgba(212,160,23,.15);border-color:var(--gold2);}
+
+/* SCOREBOARD */
 #scoreboard{background:rgba(10,0,3,.97);}
 .sb-inner{width:100%;max-width:580px;}
 .sb-title{font-family:'Pacifico',cursive;font-size:clamp(22px,4vw,38px);color:var(--gold2);text-align:center;margin-bottom:14px;}
@@ -191,6 +177,8 @@ textarea{resize:vertical;min-height:56px;}
 .sb-score{font-family:'Pacifico',cursive;font-size:clamp(16px,2.5vw,24px);color:var(--gold3);}
 .sb-zero{color:rgba(255,248,231,.3);}
 .sb-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+
+/* LYRICS */
 #lyrics{background:rgba(10,0,3,.97);}
 .lyrics-box{width:100%;max-width:700px;text-align:center;}
 .lyrics-title{font-family:'Pacifico',cursive;font-size:clamp(20px,4vw,36px);color:var(--gold2);margin-bottom:5px;}
@@ -199,15 +187,18 @@ textarea{resize:vertical;min-height:56px;}
 .lyrics-empty{color:rgba(255,248,231,.3);font-size:16px;padding:24px;background:rgba(0,0,0,.25);border:1px dashed rgba(212,160,23,.2);border-radius:var(--radius);margin-bottom:14px;}
 .btn-nxtp{font-family:'Pacifico',cursive;font-size:clamp(13px,2vw,19px);padding:11px 28px;background:linear-gradient(135deg,#5a0000,#8b0000);color:var(--gold2);border:2px solid rgba(212,160,23,.3);border-radius:50px;cursor:pointer;box-shadow:0 3px 0 #2a0000;transition:all .15s;}
 .btn-nxtp:hover{transform:translateY(-1px);}
+
+/* EDIT */
 #edit{background:rgba(10,0,3,.97);}
 .edit-inner{width:100%;max-width:560px;}
 .edit-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .edit-h2{font-family:'Pacifico',cursive;font-size:20px;color:var(--gold2);}
-.edit-tabs{display:flex;gap:7px;margin-bottom:12px;}
-.edit-tab{flex:1;padding:7px 4px;font-size:13px;border-radius:10px;text-align:center;font-weight:700;cursor:pointer;border:1px solid rgba(212,160,23,.25);background:rgba(0,0,0,.35);color:var(--cream);}
+.edit-tabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap;}
+.edit-tab{flex:1;min-width:60px;padding:6px 4px;font-size:11px;border-radius:10px;text-align:center;font-weight:700;cursor:pointer;border:1px solid rgba(212,160,23,.25);background:rgba(0,0,0,.35);color:var(--cream);}
 .edit-tab.at{background:rgba(41,74,128,.3);border-color:#2a4a80;color:#7EB8F7;}
 .edit-tab.ad{background:rgba(90,0,0,.4);border-color:#8b0000;color:#f4a0a8;}
 .edit-tab.as{background:rgba(74,94,42,.3);border-color:var(--olive2);color:#B8CC8A;}
+.edit-tab.ac{background:rgba(0,96,100,.3);border-color:#006064;color:#80DEEA;}
 .q-list{max-height:240px;overflow-y:auto;margin-bottom:9px;}
 .q-item{display:flex;align-items:flex-start;gap:8px;padding:7px 9px;background:rgba(0,0,0,.35);border-radius:10px;margin-bottom:5px;border-right:3px solid transparent;}
 .q-item.it{border-right-color:#2a4a80;}.q-item.id{border-right-color:#8b0000;}.q-item.is{border-right-color:var(--olive2);}
@@ -218,6 +209,12 @@ textarea{resize:vertical;min-height:56px;}
 .lyr-sel{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
 .lsb{padding:4px 10px;border-radius:8px;border:1px solid rgba(212,160,23,.2);background:rgba(0,0,0,.35);color:var(--cream);cursor:pointer;font-size:12px;font-weight:700;}
 .lsb.active{background:rgba(74,94,42,.3);border-color:var(--olive2);color:#B8CC8A;}
+.clip-item{display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(0,0,0,.35);border-radius:10px;margin-bottom:5px;}
+.clip-name{flex:1;font-size:13px;color:var(--cream);}
+.clip-ok{font-size:11px;color:#80DEEA;}
+.clip-no{font-size:11px;color:rgba(212,160,23,.35);}
+
+/* BOTTOM BAR */
 .bottom-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.8);border-top:1px solid rgba(212,160,23,.15);padding:4px 12px;}
 .mb-btn{background:none;border:1px solid rgba(212,160,23,.3);border-radius:20px;padding:4px 11px;font-size:11px;font-weight:700;color:var(--gold3);cursor:pointer;font-family:inherit;transition:all .2s;}
 .mb-btn:hover{background:rgba(212,160,23,.1);}
@@ -236,7 +233,7 @@ audio{display:none;}
 <div id="setup" class="screen">
 <div class="box">
   <div class="show-title">ערב חברתי<br>בסימן מושיק</div>
-  <div class="show-sub">אמת · חובה · שיר</div>
+  <div class="show-sub">שאלות · משימות · שירים</div>
   <div class="bulbs" id="blbs"></div>
   <div class="section-lbl">פונט</div>
   <div class="font-picker">
@@ -247,9 +244,9 @@ audio{display:none;}
     <button class="fp-btn" data-font="f-rubik"><span style="font-family:'Rubik'">א</span>Rubik</button>
   </div>
   <div class="stat-row">
-    <div class="stat"><div class="stat-n" id="cntT">0</div><div class="stat-l">אמת · 500</div></div>
-    <div class="stat"><div class="stat-n" id="cntD">0</div><div class="stat-l">חובה · 1000</div></div>
-    <div class="stat"><div class="stat-n" id="cntS">0</div><div class="stat-l">שיר · 750</div></div>
+    <div class="stat"><div class="stat-n" id="cntT">0</div><div class="stat-l">שאלות</div></div>
+    <div class="stat"><div class="stat-n" id="cntD">0</div><div class="stat-l">משימות</div></div>
+    <div class="stat"><div class="stat-n" id="cntS">0</div><div class="stat-l">שירים</div></div>
   </div>
   <div class="section-lbl">משתתפים (<span id="pcnt">0</span>) — לחץ על עיגול לתמונה</div>
   <div class="chips" id="chips"></div>
@@ -276,11 +273,8 @@ audio{display:none;}
       <button class="btn btn-sm" id="toSetup">הגדרות</button>
     </div>
   </div>
-  <!-- Photo: appears above ticket when player has photo -->
   <div id="photoZone" style="flex-shrink:0;display:flex;align-items:center;justify-content:center;"></div>
-  <!-- Ticket zone: ALWAYS prominently visible, never compressed -->
   <div id="topRow" style="flex-shrink:0;width:100%;display:none;align-items:center;justify-content:center;gap:10px;padding:2px 12px;"></div>
-  <!-- Wheel fills all remaining space -->
   <div class="game-main">
     <div class="wheel-area">
       <div class="wheel-ring" id="wheelRing"><canvas id="wc"></canvas></div>
@@ -290,24 +284,79 @@ audio{display:none;}
   </div>
 </div>
 
-<div class="mult-overlay hidden" id="multOverlay">
-  <div class="mult-title-txt">מכפיל הנקודות!</div>
-  <div class="mult-number" id="multNum">×2</div>
-  <div class="mult-points" id="multPts"></div>
-</div>
-
+<!-- Question overlay -->
 <div class="q-overlay hidden" id="qOverlay">
   <div class="q-frame">
     <div class="q-frame-bulbs" id="qBulbs"></div>
     <div style="text-align:center;">
       <div class="q-badge" id="qBadge"></div>
+      <div class="pts-badge" id="qPts"></div>
       <div class="q-text" id="qText"></div>
       <div class="q-actions">
-        <button class="btn-done" id="doneBtn">ביצע/ה ✓</button>
+        <button class="btn-done" id="doneBtn">ענה/י ✓</button>
+        <button class="btn-double" id="doubleBtn">הכפל/י — משימה ×2</button>
         <button class="btn-skip" id="skipBtn">דילג/ה ✗</button>
       </div>
     </div>
   </div>
+</div>
+
+<!-- Double task overlay -->
+<div class="q-overlay hidden" id="taskOverlay">
+  <div class="q-frame">
+    <div class="q-frame-bulbs" id="taskBulbs"></div>
+    <div style="text-align:center;">
+      <div class="q-badge" style="background:linear-gradient(135deg,#4A148C,#7B1FA2);border-color:#CE93D8;">משימה לכפל!</div>
+      <div class="pts-badge" id="taskPts"></div>
+      <div class="q-text" id="taskText"></div>
+      <div class="q-actions">
+        <button class="btn-done" id="taskDoneBtn">ביצע/ה ✓</button>
+        <button class="btn-skip" id="taskSkipBtn">לא ביצע/ה ✗</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Steal banner (every 5 turns) -->
+<div class="steal-banner hidden" id="stealBanner">
+  <div class="steal-banner-txt">🦊 זמינה גנבה!</div>
+  <div class="steal-banner-btns">
+    <button class="btn btn-sm" style="color:#FF5252;border-color:rgba(255,82,82,.4)" id="bannerStealBtn">גנוב נקודות</button>
+    <button class="btn btn-sm" id="bannerPlayBtn">שחק רגיל</button>
+  </div>
+</div>
+
+<!-- Steal overlay -->
+<div class="big-overlay hidden" id="stealOverlay">
+  <div class="overlay-title" style="color:#FF5252;text-shadow:0 0 20px rgba(255,50,50,.5);">גנבה! בחר/י שחקן/ית</div>
+  <div class="steal-list" id="stealList"></div>
+  <div class="steal-range-row" id="stealRangeRow" style="display:none;">
+    <span style="font-size:13px;white-space:nowrap">כמה לגנוב?</span>
+    <input type="range" id="stealRange" min="50" max="300" step="50" value="150">
+    <span class="steal-amt" id="stealAmt">150</span>
+  </div>
+  <div class="overlay-btns">
+    <button class="btn" style="color:#FF5252;border-color:rgba(255,82,82,.4)" id="confirmStealBtn" disabled>אשר גנבה</button>
+    <button class="btn" id="cancelStealBtn">ביטול</button>
+  </div>
+</div>
+
+<!-- Song ID overlay -->
+<div class="big-overlay hidden" id="songIdOverlay">
+  <div class="overlay-title" style="color:#00BCD4;text-shadow:0 0 20px rgba(0,188,212,.4);">זהה את השיר 🎵</div>
+  <div class="pts-badge" id="songIdPts"></div>
+  <div class="song-id-list" id="songIdList"></div>
+  <audio id="clipAudio"></audio>
+  <div class="overlay-btns">
+    <button class="btn-teal" id="songIdCorrectBtn">נכון ✓</button>
+    <button class="btn-skip" id="songIdNobodyBtn" style="font-family:'Pacifico',cursive;">אף אחד לא זיהה</button>
+  </div>
+</div>
+
+<!-- Winner select overlay -->
+<div class="big-overlay hidden" id="winnerOverlay">
+  <div class="overlay-title" style="color:var(--gold2);">מי זיהה ראשון?</div>
+  <div class="winner-list" id="winnerList"></div>
 </div>
 
 <div id="scoreboard" class="screen hidden">
@@ -335,19 +384,25 @@ audio{display:none;}
 <div class="edit-inner">
   <div class="edit-header"><div class="edit-h2">עריכת שאלות</div><button class="btn btn-sm" id="editBack">חזרה</button></div>
   <div class="edit-tabs">
-    <button class="edit-tab" id="etT" onclick="setES(0)">אמת (<span id="etCT">0</span>)</button>
-    <button class="edit-tab" id="etD" onclick="setES(1)">חובה (<span id="etCD">0</span>)</button>
-    <button class="edit-tab" id="etS" onclick="setES(2)">שיר (<span id="etCS">0</span>)</button>
+    <button class="edit-tab" id="etT" onclick="setES(0)">שאלות (<span id="etCT">0</span>)</button>
+    <button class="edit-tab" id="etD" onclick="setES(1)">משימות (<span id="etCD">0</span>)</button>
+    <button class="edit-tab" id="etS" onclick="setES(2)">שירים (<span id="etCS">0</span>)</button>
+    <button class="edit-tab" id="etC" onclick="setES(3)">קליפים</button>
   </div>
   <div class="q-list" id="qList"></div>
-  <div class="add-row">
+  <div class="add-row" id="addRowWrap">
     <textarea id="nqi" placeholder="שאלה / משימה / שיר..."></textarea>
     <button class="btn" id="addQBtn" style="align-self:flex-end;padding:9px 12px;color:var(--gold);border-color:rgba(212,160,23,.4)">הוסף</button>
   </div>
   <div class="lyr-wrap" id="lyrWrap">
     <div class="lyr-lbl">מילות שירים</div>
     <div class="lyr-sel" id="lyrSel"></div>
-    <textarea id="lyrInput" placeholder="הדבק מילות שיר עם ניקוד. נשמר אוטומטית." style="min-height:100px;font-size:15px;line-height:1.7;"></textarea>
+    <textarea id="lyrInput" placeholder="הדבק מילות שיר. נשמר אוטומטית." style="min-height:100px;font-size:15px;line-height:1.7;"></textarea>
+  </div>
+  <div class="lyr-wrap" id="clipsWrap">
+    <div class="lyr-lbl">קליפי שירים — MP3 קצר לכל שיר</div>
+    <div id="clipsList"></div>
+    <div style="font-size:11px;color:rgba(212,160,23,.35);margin-top:6px;">הקליפים נשמרים לסשן הנוכחי בלבד</div>
   </div>
 </div>
 </div>
@@ -361,18 +416,23 @@ audio{display:none;}
 </div>
 
 <script>
-/* אילנה אביטן או אילנה ויסברג — עדכן לפי הצורך */
-const SONG_MAP={"רוני":0,"דורית":1,"אילנה אביטן":2,"אורי":3,"אביעד":4,"נפתלי":5};
-const BASE_PTS={truth:500,dare:1000,song:750};
+const CATS=[{key:"truth",label:"שאלה",icls:"it"},{key:"dare",label:"משימה",icls:"id"},{key:"song",label:"שיר",icls:"is"}];
 const WHEEL=[
-  {key:"truth",color:"#2979FF"},{key:"dare",color:"#C62828"},
-  {key:"song", color:"#558B2F"},{key:"truth",color:"#6A1B9A"},
-  {key:"dare", color:"#E65100"},{key:"song", color:"#00695C"},
-  {key:"truth",color:"#1565C0"},{key:"dare", color:"#AD1457"},
-  {key:"song", color:"#827717"},{key:"truth",color:"#283593"},
-  {key:"dare", color:"#BF360C"},{key:"song", color:"#1B5E20"},
+  {key:"pts",val:500, color:"#1565C0"},
+  {key:"pts",val:550, color:"#558B2F"},
+  {key:"pass",val:0,  color:"#4A148C"},
+  {key:"pts",val:600, color:"#AD1457"},
+  {key:"pts",val:650, color:"#E65100"},
+  {key:"song_id",val:750,color:"#006064"},
+  {key:"pts",val:700, color:"#6A1B9A"},
+  {key:"pts",val:750, color:"#00695C"},
+  {key:"steal",val:0, color:"#7B0000"},
+  {key:"pts",val:800, color:"#283593"},
+  {key:"pts",val:850, color:"#BF360C"},
+  {key:"pass",val:0,  color:"#4A148C"},
+  {key:"pts",val:900, color:"#1B5E20"},
+  {key:"pts",val:1000,color:"#F57F17"},
 ];
-const CATS=[{key:"truth",label:"אמת",icls:"it"},{key:"dare",label:"חובה",icls:"id"},{key:"song",label:"שיר",icls:"is"}];
 const DQ={
   truth:["איזה שיר גילטי פלז'ר את/ה שומע/ת לבד באוטו בדרך לעבודה?","מהו הכישרון הכי חסר תועלת שיש לך?","מה האוכל שאת/ה יכול/ה לאכול בלי הפסקה?","מה הרגל המוזר שיש לך שרק המשפחה יודעת עליו?","מה הדבר הראשון שאת/ה עושה כשנכנסת הביתה אחרי יום עמוס?","אם יכולת להוציא חוק מחוזי אחד שקשור לאוכל – מה הוא היה?","אם חייבת לשנות את שמך – מה היית בוחר/ת?","מה הדבר הכי מוזר שקרה לך בזמן שיחת זום כשהמצלמה הייתה דלוקה?","מהי ההודעה הכי מביכה ששלחת בטעות לקבוצת הווטסאפ של העבודה?","ספר/י על פגישה רצינית שבה לא יכולת להפסיק לצחוק – ומה התירוץ שמצאת?","מהו התירוץ הכי מוזר שהשתמשת בו כדי לצאת מוקדם מישיבה?","מה הדבר הכי טיפשי שעשית שעדיין מצחיק אותך?","אם היית נתקע/ת במעלית עם אחד המנהלים ל-3 שעות – מי זה היה ולמה?","מי בחדר הזה הכי מפתיע אותך – ולמה?","מהי הטעות הכי מצחיקה שכתבת בטעות במייל בתפוצה רחבה?","מה הדבר שהיית רוצה להגיד למישהו בחדר שעוד לא אמרת?","מה הרגע שבו הרגשת הכי גאה בעצמך – לא קשור לעבודה?","מה הדבר שעוד לא עשית בחיים ואת/ה חייב/ת לעשות?","מה הדבר הכי מוזר שמושיק ביקש ממך?","מה למדת ממושיק שתיקח/י איתך לכל החיים?","מה היית אומר/ת על מושיק בגב שלו שלא אמרת בפניו?"],
   dare:["הסבר/י מה זה טיקטוק כאילו את/ה מסביר/ה לאדם מהמאה ה-19","עמוד/י דקה שלמה בתנוחת מנהל/ת אידיאלי/ת – בזמן שכולם מנסים להצחיק אותך","מכור/י לקבוצה עט פשוט ככלי עבודה מהפכני שמשנה את פני הקהילה","תן/תני לקבוצה 3 הוראות הפעלה למנהל/ת כמוך","ספר/י בדיחה – אפילו אם היא גרועה","צייר/י את האדם שמולך ב-20 שניות – כולם מנחשים מי זה","הקרא/י הודעת מייל משמימה – בטון שחקן שייקספירי בשיא הדרמה","חקה/י מנהל/ת אחר/ת מהחדר – תנועה אופיינית ומשפט שהוא/היא תמיד אומר/ת","עצב/י עם 3 חפצים מהחדר מיצג אמנותי שמייצג את המחוז שלך – הסבר/י ברצינות","כתוב/י הודעה למושיק שלא העזת לשלוח – קרא/י בקול","שחק/י סצנה: תושב כועס מתקשר – את/ה גם התושב/ת וגם המנהל/ת","נאם/י 30 שניות למה המתנ\"ס שלי הכי טוב – בסגנון שוק","שר/י את הללויה עם מילים מהעבודה: מחוז, תקציב, קול קורא, ישיבה","שחק/י מונולוג דרמטי על אירוע טראומטי – אבל טריוויאלי לחלוטין","בחר/י 3 אנשים ותן/תני לכל אחד תואר מיוחד – עם הנמקה","הצג/י ריקוד ניצחון של מנהל/ת שקיבל/ה תקציב ענק לפרויקט חלומות","תן/תני כיף לשלושה אנשים – הכיף המהסס, המנכ\"לי, האדיש","נאם/י 30 שניות למה מושיק הוא מנהיג – בסגנון עורך/ת דין","חקה/י את מושיק בישיבת צוות – 30 שניות"],
@@ -382,8 +442,10 @@ const DEFAULT_P=["רוני","דורית","יעל","מושיק","מירי","אי�
 const NEXT_BTNS=["יעלה ויבוא השחקן הבא","לבמה – הכוכב הבא","הזרקור עובר","תורו של השחקן הבא","הגלגל ממתין","מי זוכה לסיבוב","הבא על הבמה","קדימה – השחקן הבא"];
 
 let participants=[],questions={},lyrics={},scores={},photos={},currentFont='';
-let cp=null,spinning=false,picking=false,sel=null,pending=false,Q='',mult=1,isSongP=false;
+let cp=null,spinning=false,picking=false,sel=null,pending=false,Q='';
 let btnIdx=0,prevScreen='setup',editSeg=0,selSong='';
+let turnCount=0,stealAvailable=false,currentPts=0;
+let songClips={};
 
 function loadData(){try{const p=localStorage.getItem('m-p');participants=p?JSON.parse(p):[...DEFAULT_P];const q=localStorage.getItem('m-q');questions=q?JSON.parse(q):JSON.parse(JSON.stringify(DQ));const l=localStorage.getItem('m-l');lyrics=l?JSON.parse(l):{};const s=localStorage.getItem('m-sc');scores=s?JSON.parse(s):{};const ph=localStorage.getItem('m-ph');photos=ph?JSON.parse(ph):{};const f=localStorage.getItem('m-font');if(f)currentFont=f;}catch(e){participants=[...DEFAULT_P];questions=JSON.parse(JSON.stringify(DQ));lyrics={};scores={};photos={};}}
 function saveData(){try{localStorage.setItem('m-p',JSON.stringify(participants));localStorage.setItem('m-q',JSON.stringify(questions));localStorage.setItem('m-l',JSON.stringify(lyrics));localStorage.setItem('m-sc',JSON.stringify(scores));localStorage.setItem('m-ph',JSON.stringify(photos));const b=document.getElementById('savedBadge');if(b){b.textContent='נשמר';setTimeout(()=>{b.textContent='';},1500);}}catch(e){alert('אחסון מלא');}}
@@ -399,18 +461,20 @@ function ac(){if(!window._ac)try{window._ac=new(window.AudioContext||window.webk
 function startGen(){const a=ac();if(!a)return;if(a.state==='suspended')a.resume();stopGen();const bpm=126,b=60/bpm,mel=[523,659,784,659,523,440,494,523,659,784,880,784,659,523,587,523],bas=[131,131,165,131,131,110,123,131,131,165,220,165,165,131,147,131];let t=a.currentTime+0.05;function s(){if(!genOn)return;for(let i=0;i<mel.length;i++){const st=t+i*(b*0.5);const om=a.createOscillator(),gm=a.createGain();om.connect(gm);gm.connect(a.destination);om.type='sine';om.frequency.value=mel[i];gm.gain.setValueAtTime(0,st);gm.gain.linearRampToValueAtTime(0.07,st+0.02);gm.gain.exponentialRampToValueAtTime(0.001,st+b*0.45);om.start(st);om.stop(st+b*0.5);if(i%2===0){const ob=a.createOscillator(),gb=a.createGain();ob.connect(gb);gb.connect(a.destination);ob.type='triangle';ob.frequency.value=bas[i];gb.gain.setValueAtTime(0,st);gb.gain.linearRampToValueAtTime(0.05,st+0.03);gb.gain.exponentialRampToValueAtTime(0.001,st+b*0.9);ob.start(st);ob.stop(st+b);}}t+=mel.length*b*0.5;genLoop=setTimeout(s,(mel.length*b*0.5-0.3)*1000);}s();}
 function stopGen(){if(genLoop)clearTimeout(genLoop);genLoop=null;}
 function tick(){const a=ac();if(!a)return;try{const b=a.createBuffer(1,Math.floor(a.sampleRate*.012),a.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(d.length*.25));const s=a.createBufferSource();s.buffer=b;const g=a.createGain();g.gain.value=.35;s.connect(g);g.connect(a.destination);s.start();}catch(e){}}
-function fanfare(song){const a=ac();if(!a)return;try{(song?[[392,0],[523,.12],[659,.24],[784,.36],[659,.54],[784,.66],[1047,.84]]:[[523,0],[659,.12],[784,.24],[1047,.36],[784,.5],[1047,.62],[1047,.78]]).forEach(([f,t])=>{const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type=song?"triangle":"square";o.frequency.value=f;const st=a.currentTime+t;g.gain.setValueAtTime(.13,st);g.gain.exponentialRampToValueAtTime(.001,st+.24);o.start(st);o.stop(st+.3);});}catch(e){}}
 function psnd(){const a=ac();if(!a)return;try{const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type='sine';o.frequency.setValueAtTime(350,a.currentTime);o.frequency.linearRampToValueAtTime(950,a.currentTime+.28);g.gain.setValueAtTime(.18,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.35);o.start();o.stop(a.currentTime+.35);}catch(e){}}
 
 const NW=WHEEL.length,PI2=Math.PI*2,SW=PI2/NW;
 let cs=300,rot=0,aid=null,lseg=-1;
-function calcCS(){
-  const hdr=42, ticketH=document.getElementById('topRow').style.display!=='none'?68:0;
-  const bot=52, pad=30, ringExtra=24;
-  const avH=window.innerHeight-hdr-ticketH-bot-pad-ringExtra;
-  const avW=window.innerWidth*0.90-ringExtra;
-  cs=Math.min(avH,avW,620);if(cs<180)cs=180;
+function calcCS(){const hdr=42,ticketH=document.getElementById('topRow').style.display!=='none'?68:0;const bot=52,pad=30,re=24;const avH=window.innerHeight-hdr-ticketH-bot-pad-re;const avW=window.innerWidth*0.90-re;cs=Math.min(avH,avW,620);if(cs<180)cs=180;}
+
+function segLabel(seg){
+  if(seg.key==='pts')return{l1:seg.val.toLocaleString(),l2:null};
+  if(seg.key==='pass')return{l1:'העברה',l2:null};
+  if(seg.key==='steal')return{l1:'גנבה',l2:null};
+  if(seg.key==='song_id')return{l1:'זהה',l2:'שיר'};
+  return{l1:'',l2:null};
 }
+
 function draw(r){
   const wc=document.getElementById('wc');if(!wc)return;
   const ctx=wc.getContext('2d'),c=cs/2,rad=cs/2-20;
@@ -422,29 +486,24 @@ function draw(r){
   for(let i=0;i<NW;i++){
     const sa=r+i*SW-Math.PI/2,ea=sa+SW;
     ctx.beginPath();ctx.moveTo(c,c);ctx.arc(c,c,rad,sa,ea);ctx.closePath();ctx.fillStyle=WHEEL[i].color;ctx.fill();ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1.5;ctx.stroke();
-    const cat=CATS.find(cc=>cc.key===WHEEL[i].key),pts=BASE_PTS[WHEEL[i].key];
-    const fSize=Math.round(cs*.042),pSize=Math.round(cs*.030);
+    const lbl=segLabel(WHEEL[i]);
+    const fSize=WHEEL[i].key==='pts'?Math.round(cs*.050):Math.round(cs*.036);
     ctx.save();ctx.translate(c,c);ctx.rotate(sa+SW/2);
-    ctx.fillStyle='#fff';ctx.font=`bold ${fSize}px 'Rubik',Arial`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='rgba(0,0,0,.65)';ctx.shadowBlur=4;
-    ctx.fillText(cat.label,rad*.60,-fSize*0.55);
-    ctx.fillStyle='#FFE57A';ctx.font=`bold ${pSize}px 'Rubik',Arial`;ctx.shadowBlur=2;
-    ctx.fillText(pts.toLocaleString(),rad*.60,fSize*0.55);
+    ctx.fillStyle='#fff';ctx.font=`bold ${fSize}px 'Rubik',Arial`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='rgba(0,0,0,.7)';ctx.shadowBlur=4;
+    if(lbl.l2){ctx.fillText(lbl.l1,rad*.60,-fSize*.6);ctx.fillText(lbl.l2,rad*.60,fSize*.6);}
+    else{ctx.fillText(lbl.l1,rad*.60,0);}
     ctx.restore();
   }
   for(let i=0;i<NW;i++){const a=r+i*SW-Math.PI/2;ctx.beginPath();ctx.moveTo(c,c);ctx.lineTo(c+Math.cos(a)*rad,c+Math.sin(a)*rad);ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=2;ctx.stroke();}
   const cg=ctx.createRadialGradient(c,c,0,c,c,c*.17);cg.addColorStop(0,'#FFF9C4');cg.addColorStop(1,'#D4A017');ctx.beginPath();ctx.arc(c,c,c*.17,0,PI2);ctx.fillStyle=cg;ctx.fill();ctx.strokeStyle='#B8860B';ctx.lineWidth=3;ctx.stroke();ctx.fillStyle='#5a0000';ctx.font=`${Math.round(cs*.11)}px Arial`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowBlur=0;ctx.fillText('★',c,c+1);
-  /* pointer – fully inside canvas, bigger */
-  const ty=c-rad+2, by2=Math.max(4, c-rad-24);
+  const ty=c-rad+2,by2=Math.max(4,c-rad-24);
   const pg=ctx.createLinearGradient(c,by2,c,ty);pg.addColorStop(0,'#F5C518');pg.addColorStop(1,'#B8860B');
   ctx.beginPath();ctx.moveTo(c,ty);ctx.lineTo(c-18,by2);ctx.lineTo(c+18,by2);ctx.closePath();
   ctx.fillStyle=pg;ctx.fill();ctx.strokeStyle='white';ctx.lineWidth=3;ctx.stroke();
-  /* red tip dot */
-  ctx.beginPath();ctx.arc(c,ty,5,0,PI2);ctx.fillStyle='#FF1744';ctx.fill();
-  ctx.strokeStyle='white';ctx.lineWidth=2;ctx.stroke();
+  ctx.beginPath();ctx.arc(c,ty,5,0,PI2);ctx.fillStyle='#FF1744';ctx.fill();ctx.strokeStyle='white';ctx.lineWidth=2;ctx.stroke();
 }
 
-/* ══ SPIN – only by clicking wheel ══ */
-function canSpin(){return !spinning&&!pending&&cp&&!picking&&!isSongP;}
+function canSpin(){return !spinning&&!pending&&cp&&!picking;}
 function updateWheelCursor(){const wr=document.getElementById('wheelRing');if(!wr)return;wr.classList.toggle('clickable',canSpin());}
 
 function spin(){
@@ -463,45 +522,122 @@ function spin(){
     rot=finalRot;draw(rot);spinning=false;
     document.getElementById('wheelRing').classList.remove('spinning-ring');
     const fs=Math.floor(((((-rot)%PI2)+PI2)%PI2)/SW)%NW;
-    sel=fs;const key=WHEEL[fs].key;Q=questions[key][Math.floor(Math.random()*questions[key].length)];
-    /* MULTIPLIER: 75% × 1, 25% × 2 */
-    mult=Math.random()<0.25?2:1;
+    sel=fs;const seg=WHEEL[fs];
     pending=true;updateTopRow();updateWheelCursor();
-    showMultiplier(mult,key,()=>showQuestion());
+    if(seg.key==='pass'){setTimeout(()=>nextPlayer(),700);return;}
+    turnCount++;
+    if(turnCount%5===0)stealAvailable=true;
+    currentPts=seg.val||750;
+    if(seg.key==='steal'){showStealOverlay(()=>nextPlayer());return;}
+    if(seg.key==='song_id'){showSongId();return;}
+    Q=questions.truth[Math.floor(Math.random()*questions.truth.length)]||'';
+    if(stealAvailable){showStealBanner(()=>showQuestion());}
+    else{showQuestion();}
   }
   aid=requestAnimationFrame(anim);
 }
 
-function showMultiplier(m,catKey,cb){
-  /* Only show overlay when x2 — skip for x1 */
-  if(m===1){cb();return;}
-  const ov=document.getElementById('multOverlay'),num=document.getElementById('multNum'),pts=document.getElementById('multPts');
-  const base=BASE_PTS[catKey]||500;
+function nextPlayer(){
+  pending=false;sel=null;cp=null;
+  updatePhotoZone(null,false);updateTopRow();updateWheelCursor();
+}
+
+function showStealBanner(cb){
+  const b=document.getElementById('stealBanner');b.classList.remove('hidden');
+  document.getElementById('bannerStealBtn').onclick=()=>{b.classList.add('hidden');stealAvailable=false;showStealOverlay(cb);};
+  document.getElementById('bannerPlayBtn').onclick=()=>{b.classList.add('hidden');stealAvailable=false;cb();};
+}
+
+function showStealOverlay(onDone){
+  const ov=document.getElementById('stealOverlay');
+  const list=document.getElementById('stealList');
+  const rr=document.getElementById('stealRangeRow');
+  const conf=document.getElementById('confirmStealBtn');
+  const range=document.getElementById('stealRange');
+  const amtEl=document.getElementById('stealAmt');
+  let target=null;
+  rr.style.display='none';conf.disabled=true;
+  list.innerHTML=participants.filter(p=>p!==cp).map(p=>{
+    const src=photos[p];const s=scores[p]||0;
+    const ph=src?`<img style="width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid #FF5252" src="${src}">`:`<div style="width:30px;height:30px;border-radius:50%;background:rgba(255,82,82,.1);border:1px solid rgba(255,82,82,.3);display:flex;align-items:center;justify-content:center">👤</div>`;
+    return `<div class="steal-item" data-name="${p}">${ph}<span class="steal-item-name">${p}</span><span class="steal-item-score">${s.toLocaleString()}</span></div>`;
+  }).join('');
+  list.querySelectorAll('.steal-item').forEach(item=>{
+    item.onclick=()=>{
+      list.querySelectorAll('.steal-item').forEach(i=>i.classList.remove('sel'));
+      item.classList.add('sel');target=item.dataset.name;
+      const maxS=Math.min(300,scores[target]||0);
+      range.max=maxS>0?maxS:300;range.value=Math.min(150,maxS||150);
+      amtEl.textContent=range.value;rr.style.display='flex';conf.disabled=false;
+    };
+  });
+  range.oninput=()=>{amtEl.textContent=range.value;};
+  conf.onclick=()=>{
+    if(!target)return;
+    const amt=parseInt(range.value);
+    scores[target]=Math.max(0,(scores[target]||0)-amt);
+    scores[cp]=(scores[cp]||0)+amt;
+    saveData();ov.classList.add('hidden');
+    showPointsPopup('+'+amt+' גנבה!');
+    if(onDone)onDone();
+  };
+  document.getElementById('cancelStealBtn').onclick=()=>{ov.classList.add('hidden');if(onDone)onDone();};
   ov.classList.remove('hidden');
-  let c2=0;const iv=setInterval(()=>{num.textContent='×'+[1,2][c2%2];c2++;},110);
-  setTimeout(()=>{
-    clearInterval(iv);num.textContent='×2';
-    pts.textContent=base+' × 2 = '+(base*2)+' נקודות';
-    fanfare(false);
-    setTimeout(()=>{ov.classList.add('hidden');cb();},2000);
-  },1800);
 }
 
 function showQuestion(){
-  const cat=sel!==null?CATS.find(c=>c.key===WHEEL[sel].key):null;
-  if(cat&&cat.key==='song'){showLyrics();return;}
-  document.getElementById('qBadge').textContent=(cat?cat.label:'')+(cp?' – '+cp:'');
+  document.getElementById('qBadge').textContent='שאלה – '+cp;
+  document.getElementById('qPts').textContent=currentPts.toLocaleString()+' נקודות';
   document.getElementById('qText').textContent=Q;
   document.getElementById('qOverlay').classList.remove('hidden');
   const qb=document.getElementById('qBulbs');if(qb&&qb.childElementCount===0)createFrameBulbs(qb);
 }
-function showLyrics(){
-  const p=parseSong(Q);document.getElementById('lyricsTitle').textContent=p.name;document.getElementById('lyricsArtist').textContent=p.artist?'– '+p.artist:'';
-  const lt=lyrics[Q]||'';document.getElementById('lyricsBody').innerHTML=lt?`<div class="lyrics-text">${lt}</div>`:`<div class="lyrics-empty">מילות שיר עדיין לא הוזנו</div>`;
-  const lb=document.getElementById('lyrBulbs');if(lb&&!lb.hasChildNodes())for(let i=0;i<14;i++){const d=document.createElement('span');d.className='bulb';lb.appendChild(d);}
-  showScreen('lyrics');}
-function createFrameBulbs(el){if(!el||el.childElementCount>0)return;const w=el.offsetWidth||500,h=el.offsetHeight||200,sp=28;const pl=(x,y,delay)=>{const b=document.createElement('div');b.className='qb';b.style.cssText=`left:${x}px;top:${y}px;animation-delay:${delay}s`;el.appendChild(b);};for(let x=0;x<w;x+=sp)pl(x,-5,(x/sp*.15)%1.3);for(let x=0;x<w;x+=sp)pl(x,h-5,((x/sp*.15)+.4)%1.3);for(let y=sp;y<h-sp;y+=sp)pl(-5,y,((y/sp*.15)+.2)%1.3);for(let y=sp;y<h-sp;y+=sp)pl(w-5,y,((y/sp*.15)+.7)%1.3);}
-function showPointsPopup(pts){const el=document.createElement('div');el.className='points-popup';el.textContent='+'+pts.toLocaleString();document.body.appendChild(el);setTimeout(()=>el.remove(),1900);}
+
+function showSongId(){
+  const songs=questions.song||[];
+  document.getElementById('songIdPts').textContent=currentPts.toLocaleString()+' נקודות';
+  const list=document.getElementById('songIdList');
+  const ca=document.getElementById('clipAudio');
+  list.innerHTML=songs.length===0?'<div class="empty">אין שירים — הוסף בעריכה</div>':songs.map(s=>{
+    const has=!!songClips[s];
+    const ctrl=has?`<button class="btn-play" data-song="${s}">▶</button><button class="btn-stop" data-song="${s}">■</button>`:`<span style="font-size:11px;color:rgba(212,160,23,.3)">אין קליפ</span>`;
+    return `<div class="song-id-item"><span class="song-id-name">${s}</span>${ctrl}</div>`;
+  }).join('');
+  list.querySelectorAll('.btn-stop').forEach(b=>b.style.display='none');
+  list.querySelectorAll('.btn-play').forEach(btn=>{
+    btn.onclick=()=>{
+      ca.pause();if(songClips[btn.dataset.song]){ca.src=songClips[btn.dataset.song];ca.play().catch(()=>{});}
+      list.querySelectorAll('.btn-stop').forEach(b=>b.style.display='none');
+      list.querySelectorAll('.btn-play').forEach(b=>b.style.display='');
+      btn.style.display='none';
+      const sb=btn.parentElement.querySelector('.btn-stop');if(sb)sb.style.display='';
+    };
+  });
+  list.querySelectorAll('.btn-stop').forEach(btn=>{
+    btn.onclick=()=>{ca.pause();ca.currentTime=0;btn.style.display='none';btn.parentElement.querySelector('.btn-play').style.display='';};
+  });
+  document.getElementById('songIdOverlay').classList.remove('hidden');
+}
+
+function showWinnerSelect(pts){
+  const ov=document.getElementById('winnerOverlay');
+  const list=document.getElementById('winnerList');
+  list.innerHTML=participants.map(p=>`<div class="winner-item" data-name="${p}">${p}</div>`).join('');
+  list.querySelectorAll('.winner-item').forEach(item=>{
+    item.onclick=()=>{
+      const w=item.dataset.name;scores[w]=(scores[w]||0)+pts;saveData();
+      showPointsPopup('+'+pts.toLocaleString());
+      ov.classList.add('hidden');
+      document.getElementById('clipAudio').pause();
+      document.getElementById('songIdOverlay').classList.add('hidden');
+      nextPlayer();
+    };
+  });
+  ov.classList.remove('hidden');
+}
+
+function createFrameBulbs(el){if(!el||el.childElementCount>0)return;const w=el.offsetWidth||500,h=el.offsetHeight||200,sp=28;const pl=(x,y,d)=>{const b=document.createElement('div');b.className='qb';b.style.cssText=`left:${x}px;top:${y}px;animation-delay:${d}s`;el.appendChild(b);};for(let x=0;x<w;x+=sp)pl(x,-5,(x/sp*.15)%1.3);for(let x=0;x<w;x+=sp)pl(x,h-5,((x/sp*.15)+.4)%1.3);for(let y=sp;y<h-sp;y+=sp)pl(-5,y,((y/sp*.15)+.2)%1.3);for(let y=sp;y<h-sp;y+=sp)pl(w-5,y,((y/sp*.15)+.7)%1.3);}
+function showPointsPopup(txt){const el=document.createElement('div');el.className='points-popup';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),1900);}
 function parseSong(s){const d=s.indexOf('–');return d>-1?{name:s.slice(0,d).trim(),artist:s.slice(d+1).trim()}:{name:s.trim(),artist:''};}
 
 function showPhotoSplash(name,src){
@@ -515,29 +651,28 @@ function showPhotoSplash(name,src){
 
 function pickP(){
   if(picking||!participants.length)return;
-  picking=true;sel=null;pending=false;isSongP=false;updatePhotoZone(null,true);
+  picking=true;sel=null;pending=false;updatePhotoZone(null,true);
   let count=0,delay=60,max=12+Math.floor(Math.random()*8);
   function cycle(){cp=participants[Math.floor(Math.random()*participants.length)];updateTopRow();count++;
     if(count<max){delay=Math.min(delay*1.1,350);setTimeout(cycle,delay);}
     else{cp=participants[Math.floor(Math.random()*participants.length)];picking=false;psnd();
-      if(SONG_MAP.hasOwnProperty(cp)){isSongP=true;const idx=SONG_MAP[cp];const list=questions.song||[];Q=list[idx%list.length]||list[0]||'';sel=WHEEL.findIndex(w=>w.key==='song');pending=true;}
       showPhotoSplash(cp,photos[cp]||null);
       updatePhotoZone(cp,false);updateTopRow();updateWheelCursor();
     }
   }cycle();
 }
+
 function updatePhotoZone(name,pick){
   const pz=document.getElementById('photoZone');if(!pz)return;
   if(pick||!name){pz.innerHTML='';pz.style.height='0';pz.style.marginBottom='0';return;}
   const src=photos[name];
-  if(src){const sz=Math.round(Math.min(window.innerHeight*.13,window.innerWidth*.11,120));pz.style.height=sz+'px';pz.style.marginBottom='2px';pz.innerHTML=`<img class="player-photo" src="${src}" style="width:${sz}px;height:${sz}px" alt="${name}">`;
-  }else{pz.innerHTML='';pz.style.height='0';pz.style.marginBottom='0';}
+  if(src){const sz=Math.round(Math.min(window.innerHeight*.13,window.innerWidth*.11,120));pz.style.height=sz+'px';pz.style.marginBottom='2px';pz.innerHTML=`<img class="player-photo" src="${src}" style="width:${sz}px;height:${sz}px" alt="${name}">`;}
+  else{pz.innerHTML='';pz.style.height='0';pz.style.marginBottom='0';}
 }
 
 function makeTL(n){let h='<div class="ticket-lights">';for(let i=0;i<n;i++)h+='<div class="tl"></div>';return h+'</div>';}
 function updateTopRow(){
   const tr=document.getElementById('topRow');if(!tr)return;
-  /* Bottom row: next player btn when no player */
   const br=document.getElementById('bottomRow');
   if(!cp&&!picking){
     tr.style.display='none';tr.innerHTML='';
@@ -546,36 +681,72 @@ function updateTopRow(){
     calcCS();const wc=document.getElementById('wc');if(wc){wc.width=cs;wc.height=cs;draw(rot);}
     return;
   }
-  tr.style.display='flex';
-  if(br)br.innerHTML='';
-  const parsed=pending&&isSongP?parseSong(Q):{name:'',artist:''};
-  const side=pending&&!isSongP?`<button class="side-btn reveal" id="sideBtnEl">לחשיפת האתגר</button>`:pending&&isSongP?`<button class="side-btn song-btn" id="sideBtnEl">שיר: ${parsed.name}</button>`:'';
-  /* Name with exclamation mark */
+  tr.style.display='flex';if(br)br.innerHTML='';
   const displayName=(cp||'')+'!';
-  tr.innerHTML=`${makeTL(7)}<div class="ticket"><div class="ticket-stars">★ ★ ★</div><div class="ticket-lbl">${picking?'בוחר...':'הזרקור על'}</div><div class="ticket-name${picking?' picking':''}">${picking?(cp||''):displayName}</div><div class="ticket-stars">★ ★ ★</div></div>${makeTL(7)}${side}`;
-  const sb=document.getElementById('sideBtnEl');if(sb)sb.onclick=()=>{if(isSongP){pending=false;showLyrics();}else{pending=false;showQuestion();}};
-  /* Wheel hint when player selected and ready to spin */
+  tr.innerHTML=`${makeTL(7)}<div class="ticket"><div class="ticket-stars">★ ★ ★</div><div class="ticket-lbl">${picking?'בוחר...':'הזרקור על'}</div><div class="ticket-name${picking?' picking':''}">${picking?(cp||''):displayName}</div><div class="ticket-stars">★ ★ ★</div></div>${makeTL(7)}`;
   const wh=document.getElementById('wHint');
-  if(wh&&!spinning&&!pending&&cp&&!isSongP)wh.textContent='לחץ/י על הגלגל כדי לסובב';
+  if(wh&&!spinning&&!pending&&cp)wh.textContent='לחץ/י על הגלגל כדי לסובב';
   else if(wh)wh.textContent='';
+}
+
+function showLyrics(){
+  const p=parseSong(Q);document.getElementById('lyricsTitle').textContent=p.name;document.getElementById('lyricsArtist').textContent=p.artist?'– '+p.artist:'';
+  const lt=lyrics[Q]||'';document.getElementById('lyricsBody').innerHTML=lt?`<div class="lyrics-text">${lt}</div>`:`<div class="lyrics-empty">מילות שיר עדיין לא הוזנו</div>`;
+  const lb=document.getElementById('lyrBulbs');if(lb&&!lb.hasChildNodes())for(let i=0;i<14;i++){const d=document.createElement('span');d.className='bulb';lb.appendChild(d);}
+  showScreen('lyrics');
 }
 
 function renderScoreboard(){const sorted=[...participants].sort((a,b)=>(scores[b]||0)-(scores[a]||0));const list=document.getElementById('sbList');if(!list)return;list.innerHTML=sorted.map((p,i)=>{const s=scores[p]||0,src=photos[p];const rankCls=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':''+(i+1);const photoEl=src?`<img class="sb-photo" src="${src}" alt="${p}">`:`<div class="sb-photo-ph">👤</div>`;return `<div class="sb-item ${rankCls}">${photoEl}<div class="sb-rank">${medal}</div><div class="sb-name">${p}</div><div class="sb-score ${s===0?'sb-zero':''}">${s.toLocaleString()}</div></div>`;}).join('');}
 
 function showScreen(s){['setup','game','scoreboard','lyrics','edit'].forEach(id=>{document.getElementById(id).classList.toggle('hidden',id!==s);});}
 function renderSetup(){
-  document.getElementById('cntT').textContent=questions.truth.length;document.getElementById('cntD').textContent=questions.dare.length;document.getElementById('cntS').textContent=questions.song.length;document.getElementById('pcnt').textContent=participants.length;
+  document.getElementById('cntT').textContent=questions.truth.length;
+  document.getElementById('cntD').textContent=questions.dare.length;
+  document.getElementById('cntS').textContent=questions.song.length;
+  document.getElementById('pcnt').textContent=participants.length;
   const ch=document.getElementById('chips');
   if(ch){ch.innerHTML=participants.length===0?'<div class="empty">עדיין אין משתתפים</div>':participants.map(p=>{const src=photos[p];const photoEl=src?`<img class="chip-photo" src="${src}" data-name="${p}" title="לחץ להחלפה">`:`<div class="chip-photo-ph" data-name="${p}" title="לחץ לתמונה">+</div>`;return `<span class="chip">${photoEl}${p}<button class="chip-del" data-rm="${p}">×</button></span>`;}).join('');
   ch.querySelectorAll('.chip-del').forEach(b=>b.onclick=()=>{const n=b.dataset.rm;participants=participants.filter(p=>p!==n);delete photos[n];saveData();renderSetup();});
   ch.querySelectorAll('[data-name]').forEach(el=>el.onclick=()=>uploadPhotoFor(el.dataset.name));}
 }
-function setES(i){editSeg=i;['T','D','S'].forEach((l,j)=>{const el=document.getElementById('et'+l);if(el)el.className='edit-tab'+(j===i?[' at',' ad',' as'][i]:'');});['etCT','etCD','etCS'].forEach((id,j)=>{const el=document.getElementById(id);if(el)el.textContent=questions[CATS[j].key].length;});const key=CATS[i].key,icls=CATS[i].icls;const list=document.getElementById('qList');if(list){list.innerHTML=(questions[key]||[]).length===0?'<div class="empty">אין פריטים</div>':(questions[key]||[]).map((q,idx)=>`<div class="q-item ${icls}"><span class="q-item-text">${q}</span><button class="btn btn-sm btn-danger" data-del="${idx}">הסר</button></div>`).join('');list.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{questions[CATS[editSeg].key].splice(parseInt(b.dataset.del),1);saveData();setES(editSeg);renderSetup();});}const lw=document.getElementById('lyrWrap');if(lw)lw.style.display=(i===2)?'block':'none';if(i===2)renderLE();document.getElementById('nqi').value='';}
+
+function setES(i){
+  editSeg=i;
+  const tabCls=[' at',' ad',' as',' ac'];
+  ['T','D','S','C'].forEach((l,j)=>{const el=document.getElementById('et'+l);if(el)el.className='edit-tab'+(j===i?tabCls[j]:'');});
+  const lw=document.getElementById('lyrWrap'),cw=document.getElementById('clipsWrap'),ar=document.getElementById('addRowWrap');
+  if(i===3){if(lw)lw.style.display='none';if(cw)cw.style.display='block';if(ar)ar.style.display='none';document.getElementById('qList').innerHTML='';renderClips();return;}
+  if(lw)lw.style.display=(i===2)?'block':'none';if(cw)cw.style.display='none';if(ar)ar.style.display='flex';
+  ['etCT','etCD','etCS'].forEach((id,j)=>{const el=document.getElementById(id);if(el)el.textContent=questions[CATS[j].key].length;});
+  const key=CATS[i].key,icls=CATS[i].icls;
+  const list=document.getElementById('qList');
+  if(list){list.innerHTML=(questions[key]||[]).length===0?'<div class="empty">אין פריטים</div>':(questions[key]||[]).map((q,idx)=>`<div class="q-item ${icls}"><span class="q-item-text">${q}</span><button class="btn btn-sm btn-danger" data-del="${idx}">הסר</button></div>`).join('');list.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{questions[CATS[editSeg].key].splice(parseInt(b.dataset.del),1);saveData();setES(editSeg);renderSetup();});}
+  if(i===2)renderLE();
+  document.getElementById('nqi').value='';
+}
+
+function renderClips(){
+  const songs=questions.song||[];
+  const cl=document.getElementById('clipsList');if(!cl)return;
+  cl.innerHTML=songs.length===0?'<div class="empty">הוסף שירים בטאב שירים תחילה</div>':songs.map(s=>{
+    const has=!!songClips[s];
+    return `<div class="clip-item"><span class="clip-name">${s}</span><span class="${has?'clip-ok':'clip-no'}">${has?'✓ נטען':'ללא קליפ'}</span><label class="btn btn-sm" style="cursor:pointer;font-size:11px;padding:4px 8px;">העלה<input type="file" accept="audio/*" data-song="${s}" style="display:none"></label></div>`;
+  }).join('');
+  cl.querySelectorAll('input[type=file]').forEach(inp=>{inp.onchange=e=>{const f=e.target.files[0];if(!f)return;songClips[inp.dataset.song]=URL.createObjectURL(f);renderClips();};});
+}
+
 function renderLE(){const songs=questions.song||[];const s2=document.getElementById('lyrSel');if(!s2)return;s2.innerHTML=songs.map(s=>`<button class="lsb${s===selSong?' active':''}" data-song="${s}">${s.split('–')[0].trim()}</button>`).join('');s2.querySelectorAll('.lsb').forEach(b=>{b.onclick=()=>{selSong=b.dataset.song;document.getElementById('lyrInput').value=lyrics[selSong]||'';renderLE();};});const inp=document.getElementById('lyrInput');if(inp){inp.oninput=()=>{if(selSong){lyrics[selSong]=inp.value;saveData();}};if(!selSong&&songs.length>0){selSong=songs[0];inp.value=lyrics[selSong]||'';renderLE();}}}
+
+function closeAllOverlays(){
+  ['qOverlay','taskOverlay','stealOverlay','songIdOverlay','winnerOverlay'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  document.getElementById('stealBanner').classList.add('hidden');
+  document.getElementById('clipAudio').pause();
+}
 
 function initGame(){
   calcCS();const wc=document.getElementById('wc');if(wc){wc.width=cs;wc.height=cs;}
-  draw(rot);cp=null;spinning=false;picking=false;sel=null;pending=false;isSongP=false;
+  draw(rot);cp=null;spinning=false;picking=false;sel=null;pending=false;
+  turnCount=0;stealAvailable=false;currentPts=0;
   document.getElementById('photoZone').innerHTML='';document.getElementById('photoZone').style.height='0';
   document.getElementById('wHint').textContent='';
   updateTopRow();updateWheelCursor();
@@ -592,17 +763,41 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('exportBtn').onclick=exportData;
   document.getElementById('importInput').onchange=e=>{const f=e.target.files[0];if(f){importData(f);e.target.value='';}};
   document.getElementById('startBtn').onclick=()=>{if(participants.length<2)return;showScreen('game');initGame();};
-  /* WHEEL CLICK = SPIN */
   document.getElementById('wheelRing').onclick=spin;
-  document.getElementById('toSetup').onclick=()=>{if(aid)cancelAnimationFrame(aid);spinning=false;document.getElementById('qOverlay').classList.add('hidden');document.getElementById('multOverlay').classList.add('hidden');showScreen('setup');renderSetup();};
+  document.getElementById('toSetup').onclick=()=>{if(aid)cancelAnimationFrame(aid);spinning=false;closeAllOverlays();showScreen('setup');renderSetup();};
   document.getElementById('editQGame').onclick=()=>{prevScreen='game';setES(0);showScreen('edit');};
   document.getElementById('scoreBtn').onclick=()=>{renderScoreboard();showScreen('scoreboard');};
-  document.getElementById('doneBtn').onclick=()=>{document.getElementById('qOverlay').classList.add('hidden');const cat=sel!==null?CATS.find(c=>c.key===WHEEL[sel].key):null;const pts=(BASE_PTS[cat?cat.key:'truth']||500)*mult;scores[cp]=(scores[cp]||0)+pts;saveData();showPointsPopup(pts);setTimeout(()=>{pending=false;sel=null;cp=null;isSongP=false;updatePhotoZone(null,false);updateTopRow();updateWheelCursor();},200);};
-  document.getElementById('skipBtn').onclick=()=>{document.getElementById('qOverlay').classList.add('hidden');pending=false;sel=null;cp=null;isSongP=false;updatePhotoZone(null,false);updateTopRow();updateWheelCursor();};
-  document.getElementById('lyricsDone').onclick=()=>{const cat=sel!==null?CATS.find(c=>c.key===WHEEL[sel].key):null;if(cat&&cat.key==='song'){const pts=(BASE_PTS.song||750)*mult;scores[cp]=(scores[cp]||0)+pts;saveData();showPointsPopup(pts);}pending=false;sel=null;cp=null;isSongP=false;showScreen('game');updatePhotoZone(null,false);updateTopRow();updateWheelCursor();document.getElementById('wHint').textContent='';};
+
+  document.getElementById('doneBtn').onclick=()=>{
+    document.getElementById('qOverlay').classList.add('hidden');
+    scores[cp]=(scores[cp]||0)+currentPts;saveData();showPointsPopup('+'+currentPts.toLocaleString());
+    setTimeout(()=>nextPlayer(),200);
+  };
+
+  document.getElementById('doubleBtn').onclick=()=>{
+    document.getElementById('qOverlay').classList.add('hidden');
+    const dares=questions.dare||[];const task=dares[Math.floor(Math.random()*dares.length)]||'אין משימות — הוסף בעריכה';
+    const dbl=currentPts*2;
+    document.getElementById('taskPts').textContent=dbl.toLocaleString()+' נקודות (×2)';
+    document.getElementById('taskText').textContent=task;
+    document.getElementById('taskOverlay').classList.remove('hidden');
+    const tb=document.getElementById('taskBulbs');if(tb&&tb.childElementCount===0)createFrameBulbs(tb);
+  };
+  document.getElementById('taskDoneBtn').onclick=()=>{
+    document.getElementById('taskOverlay').classList.add('hidden');
+    const dbl=currentPts*2;scores[cp]=(scores[cp]||0)+dbl;saveData();showPointsPopup('+'+dbl.toLocaleString());
+    setTimeout(()=>nextPlayer(),200);
+  };
+  document.getElementById('taskSkipBtn').onclick=()=>{document.getElementById('taskOverlay').classList.add('hidden');nextPlayer();};
+  document.getElementById('skipBtn').onclick=()=>{document.getElementById('qOverlay').classList.add('hidden');nextPlayer();};
+
+  document.getElementById('songIdCorrectBtn').onclick=()=>{document.getElementById('clipAudio').pause();showWinnerSelect(currentPts);};
+  document.getElementById('songIdNobodyBtn').onclick=()=>{document.getElementById('clipAudio').pause();document.getElementById('songIdOverlay').classList.add('hidden');nextPlayer();};
+
+  document.getElementById('lyricsDone').onclick=()=>{pending=false;sel=null;cp=null;showScreen('game');updatePhotoZone(null,false);updateTopRow();updateWheelCursor();document.getElementById('wHint').textContent='';};
   document.getElementById('sbBack').onclick=()=>{showScreen('game');};
   document.getElementById('sbReset').onclick=()=>{if(confirm('לאפס את כל הניקוד?')){scores={};saveData();renderScoreboard();}};
-  document.getElementById('editBack').onclick=()=>{renderSetup();if(prevScreen==='game'){showScreen('game');}else showScreen('setup');};
+  document.getElementById('editBack').onclick=()=>{renderSetup();showScreen(prevScreen==='game'?'game':'setup');};
   document.getElementById('addQBtn').onclick=()=>{const val=(document.getElementById('nqi').value||'').trim();if(!val)return;questions[CATS[editSeg].key].push(val);saveData();setES(editSeg);renderSetup();};
   window.addEventListener('resize',()=>{if(!document.getElementById('game').classList.contains('hidden')){calcCS();const wc=document.getElementById('wc');if(wc){wc.width=cs;wc.height=cs;draw(rot);}}});
 });
