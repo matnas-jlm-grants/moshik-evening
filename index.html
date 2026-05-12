@@ -80,6 +80,11 @@ textarea{resize:vertical;min-height:56px;}
 .photo-zone{display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .player-photo{border-radius:50%;object-fit:cover;border:4px solid var(--gold2);box-shadow:0 0 0 4px rgba(212,160,23,.2),0 0 30px rgba(255,215,0,.4);animation:photoExplode .55s cubic-bezier(.34,1.56,.64,1) forwards;}
 @keyframes photoExplode{0%{transform:scale(0) rotate(-20deg);opacity:0;}65%{transform:scale(1.18) rotate(6deg);opacity:1;}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+.photo-splash{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;animation:splashBgIn .25s ease-out;}
+@keyframes splashBgIn{from{opacity:0;}to{opacity:1;}}
+.splash-img{border-radius:50%;object-fit:cover;border:7px solid var(--gold2);box-shadow:0 0 0 8px rgba(212,160,23,.25),0 0 80px rgba(255,215,0,.55);animation:splashPop .55s cubic-bezier(.34,1.56,.64,1) forwards;}
+@keyframes splashPop{0%{transform:scale(0) rotate(-18deg);opacity:0;}65%{transform:scale(1.15) rotate(5deg);opacity:1;}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+.splash-name{font-family:'Pacifico',cursive;font-size:clamp(32px,8vw,72px);color:var(--gold2);text-shadow:0 0 40px rgba(212,160,23,.8),3px 3px 0 rgba(0,0,0,.6);text-align:center;animation:splashPop .55s cubic-bezier(.34,1.56,.64,1) forwards;}
 
 /* TICKET ROW */
 .top-row{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;flex-shrink:0;}
@@ -499,6 +504,15 @@ function createFrameBulbs(el){if(!el||el.childElementCount>0)return;const w=el.o
 function showPointsPopup(pts){const el=document.createElement('div');el.className='points-popup';el.textContent='+'+pts.toLocaleString();document.body.appendChild(el);setTimeout(()=>el.remove(),1900);}
 function parseSong(s){const d=s.indexOf('–');return d>-1?{name:s.slice(0,d).trim(),artist:s.slice(d+1).trim()}:{name:s.trim(),artist:''};}
 
+function showPhotoSplash(name,src){
+  const ex=document.getElementById('photoSplash');if(ex)ex.remove();
+  const sz=Math.round(Math.min(window.innerHeight*.42,window.innerWidth*.58,300));
+  const div=document.createElement('div');div.className='photo-splash';div.id='photoSplash';
+  div.innerHTML=`<img class="splash-img" src="${src}" style="width:${sz}px;height:${sz}px" alt="${name}"><div class="splash-name">${name}!</div>`;
+  document.body.appendChild(div);
+  setTimeout(()=>{div.style.transition='opacity .45s';div.style.opacity='0';setTimeout(()=>div.remove(),450);},2400);
+}
+
 function pickP(){
   if(picking||!participants.length)return;
   picking=true;sel=null;pending=false;isSongP=false;updatePhotoZone(null,true);
@@ -507,6 +521,7 @@ function pickP(){
     if(count<max){delay=Math.min(delay*1.1,350);setTimeout(cycle,delay);}
     else{cp=participants[Math.floor(Math.random()*participants.length)];picking=false;psnd();
       if(SONG_MAP.hasOwnProperty(cp)){isSongP=true;const idx=SONG_MAP[cp];const list=questions.song||[];Q=list[idx%list.length]||list[0]||'';sel=WHEEL.findIndex(w=>w.key==='song');pending=true;}
+      if(photos[cp])showPhotoSplash(cp,photos[cp]);
       updatePhotoZone(cp,false);updateTopRow();updateWheelCursor();
     }
   }cycle();
