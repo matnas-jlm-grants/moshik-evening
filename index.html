@@ -64,7 +64,9 @@ textarea{resize:vertical;min-height:56px;}
 .hdr-actions{display:flex;gap:5px;align-items:center;}
 .score-chip{background:rgba(212,160,23,.15);border:1px solid rgba(212,160,23,.3);border-radius:20px;padding:3px 9px;font-size:11px;color:var(--gold3);cursor:pointer;}
 .score-chip:hover{background:rgba(212,160,23,.25);}
-.game-main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 10px 6px;overflow:hidden;gap:4px;min-height:0;}
+.game-main{flex:1;display:flex;flex-direction:row;align-items:center;justify-content:center;padding:6px 8px;overflow:hidden;gap:10px;min-height:0;}
+.side-panel{width:120px;min-width:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;flex-shrink:0;padding:0 4px;}
+.side-panel .next-btn{font-size:clamp(11px,1.6vw,14px);padding:10px 8px;white-space:normal;line-height:1.4;border-radius:14px;width:100%;}
 
 /* PHOTO */
 .photo-zone{display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -273,14 +275,12 @@ audio{display:none;}
       <button class="btn btn-sm" id="toSetup">הגדרות</button>
     </div>
   </div>
-  <div id="photoZone" style="flex-shrink:0;display:flex;align-items:center;justify-content:center;"></div>
-  <div id="topRow" style="flex-shrink:0;width:100%;display:none;align-items:center;justify-content:center;gap:10px;padding:2px 12px;"></div>
   <div class="game-main">
     <div class="wheel-area">
       <div class="wheel-ring" id="wheelRing"><canvas id="wc"></canvas></div>
       <div class="wheel-hint" id="wHint"></div>
     </div>
-    <div class="bottom-row" id="bottomRow"></div>
+    <div class="side-panel" id="sidePanel"></div>
   </div>
 </div>
 
@@ -467,7 +467,7 @@ function psnd(){const a=ac();if(!a)return;try{const o=a.createOscillator(),g=a.c
 
 const NW=WHEEL.length,PI2=Math.PI*2,SW=PI2/NW;
 let cs=300,rot=0,aid=null,lseg=-1;
-function calcCS(){const hdr=42,ticketH=document.getElementById('topRow').style.display!=='none'?68:0;const bot=52,pad=30,re=24;const avH=window.innerHeight-hdr-ticketH-bot-pad-re;const avW=window.innerWidth*0.90-re;cs=Math.min(avH,avW,620);if(cs<180)cs=180;}
+function calcCS(){const hdr=42,bot=52,pad=24,re=16,sidePW=128;const avH=window.innerHeight-hdr-bot-pad-re;const avW=(window.innerWidth-sidePW)*0.90-re;cs=Math.min(avH,avW,620);if(cs<180)cs=180;}
 
 function segLabel(seg){
   if(seg.key==='pts')return{l1:seg.val.toLocaleString(),l2:null};
@@ -674,28 +674,23 @@ function pickP(){
   }cycle();
 }
 
-function updatePhotoZone(name,pick){
-  const pz=document.getElementById('photoZone');if(!pz)return;
-  if(pick||!name){pz.innerHTML='';pz.style.height='0';pz.style.marginBottom='0';return;}
-  const src=photos[name];
-  if(src){const sz=Math.round(Math.min(window.innerHeight*.13,window.innerWidth*.11,120));pz.style.height=sz+'px';pz.style.marginBottom='2px';pz.innerHTML=`<img class="player-photo" src="${src}" style="width:${sz}px;height:${sz}px" alt="${name}">`;}
-  else{pz.innerHTML='';pz.style.height='0';pz.style.marginBottom='0';}
-}
+function updatePhotoZone(){}
 
 function makeTL(n){let h='<div class="ticket-lights">';for(let i=0;i<n;i++)h+='<div class="tl"></div>';return h+'</div>';}
 function updateTopRow(){
-  const tr=document.getElementById('topRow');if(!tr)return;
-  const br=document.getElementById('bottomRow');
+  const sp=document.getElementById('sidePanel');if(!sp)return;
   if(!cp&&!picking){
-    tr.style.display='none';tr.innerHTML='';
-    if(br)br.innerHTML=`<button class="next-btn" id="npBtn">${NEXT_BTNS[btnIdx%NEXT_BTNS.length]}</button>`;
+    sp.innerHTML=`<button class="next-btn" id="npBtn">${NEXT_BTNS[btnIdx%NEXT_BTNS.length]}</button>`;
     const nb=document.getElementById('npBtn');if(nb)nb.onclick=()=>{btnIdx++;pickP();};
     calcCS();const wc=document.getElementById('wc');if(wc){wc.width=cs;wc.height=cs;draw(rot);}
     return;
   }
-  tr.style.display='flex';if(br)br.innerHTML='';
-  const displayName=(cp||'')+'!';
-  tr.innerHTML=`${makeTL(6)}<div style="font-family:'Pacifico',cursive;font-size:clamp(22px,5vw,54px);color:${picking?'rgba(212,160,23,.3)':'var(--gold2)'};text-shadow:2px 2px 0 rgba(0,0,0,.55),0 0 28px rgba(212,160,23,.45);line-height:1;padding:0 10px;">${picking?(cp||''):displayName}</div>${makeTL(6)}`;
+  const src=!picking&&cp?photos[cp]:null;
+  const sz=Math.round(Math.min(window.innerHeight*.10,window.innerWidth*.12,86));
+  const photoEl=src?`<img class="player-photo" src="${src}" style="width:${sz}px;height:${sz}px" alt="${cp}">`:'';
+  const displayName=picking?(cp||''):((cp||'')+'!');
+  const nameColor=picking?'rgba(212,160,23,.28)':'var(--gold2)';
+  sp.innerHTML=`${photoEl}<div style="font-family:'Pacifico',cursive;font-size:clamp(13px,2.2vw,20px);color:${nameColor};text-shadow:1px 1px 0 rgba(0,0,0,.5),0 0 14px rgba(212,160,23,.4);line-height:1.25;text-align:center;">${displayName}</div>`;
   const wh=document.getElementById('wHint');
   if(wh&&!spinning&&!pending&&cp)wh.textContent='לחץ/י על הגלגל כדי לסובב';
   else if(wh)wh.textContent='';
@@ -759,7 +754,6 @@ function initGame(){
   calcCS();const wc=document.getElementById('wc');if(wc){wc.width=cs;wc.height=cs;}
   draw(rot);cp=null;spinning=false;picking=false;sel=null;pending=false;
   turnCount=0;stealAvailable=false;currentPts=0;
-  document.getElementById('photoZone').innerHTML='';document.getElementById('photoZone').style.height='0';
   document.getElementById('wHint').textContent='';
   updateTopRow();updateWheelCursor();
 }
