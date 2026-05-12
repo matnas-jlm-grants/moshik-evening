@@ -65,7 +65,7 @@ textarea{resize:vertical;min-height:56px;}
 .score-chip{background:rgba(212,160,23,.15);border:1px solid rgba(212,160,23,.3);border-radius:20px;padding:3px 9px;font-size:11px;color:var(--gold3);cursor:pointer;}
 .score-chip:hover{background:rgba(212,160,23,.25);}
 .game-main{flex:1;display:flex;flex-direction:row;align-items:center;justify-content:center;padding:6px 8px;overflow:hidden;gap:10px;min-height:0;}
-.side-panel{width:120px;min-width:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;flex-shrink:0;padding:0 4px;}
+.side-panel{flex:1;max-width:320px;min-width:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:0 12px;}
 .side-panel .next-btn{font-size:clamp(11px,1.6vw,14px);padding:10px 8px;white-space:normal;line-height:1.4;border-radius:14px;width:100%;}
 
 /* PHOTO */
@@ -96,7 +96,7 @@ textarea{resize:vertical;min-height:56px;}
 @keyframes rp{50%{box-shadow:0 4px 0 #2a0000,0 7px 28px rgba(100,0,0,.5);}}
 
 /* WHEEL */
-.wheel-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:0;}
+.wheel-area{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:0;}
 .wheel-ring{display:inline-block;padding:8px;border-radius:50%;background:radial-gradient(circle,#5a0000,#2a0000);border:3px solid var(--gold);box-shadow:0 0 0 5px rgba(212,160,23,.18),0 0 60px rgba(212,160,23,.1);cursor:default;transition:transform .15s,box-shadow .3s;}
 .wheel-ring.clickable{cursor:pointer;animation:wheelPulse 1.8s ease-in-out infinite;}
 @keyframes wheelPulse{0%,100%{box-shadow:0 0 0 5px rgba(212,160,23,.18),0 0 50px rgba(212,160,23,.1);}50%{box-shadow:0 0 0 9px rgba(212,160,23,.35),0 0 70px rgba(212,160,23,.3);}}
@@ -467,7 +467,7 @@ function psnd(){const a=ac();if(!a)return;try{const o=a.createOscillator(),g=a.c
 
 const NW=WHEEL.length,PI2=Math.PI*2,SW=PI2/NW;
 let cs=300,rot=0,aid=null,lseg=-1;
-function calcCS(){const hdr=42,bot=52,pad=24,re=16,sidePW=128;const avH=window.innerHeight-hdr-bot-pad-re;const avW=(window.innerWidth-sidePW)*0.90-re;cs=Math.min(avH,avW,620);if(cs<180)cs=180;}
+function calcCS(){const hdr=42,bot=52,pad=24,re=16,minPanel=140;const avH=window.innerHeight-hdr-bot-pad-re;const avW=window.innerWidth-minPanel-10-re;cs=Math.min(avH,avW,620);if(cs<180)cs=180;}
 
 function segLabel(seg){
   if(seg.key==='pts')return{l1:seg.val.toLocaleString(),l2:null};
@@ -686,11 +686,12 @@ function updateTopRow(){
     return;
   }
   const src=!picking&&cp?photos[cp]:null;
-  const sz=Math.round(Math.min(window.innerHeight*.10,window.innerWidth*.12,86));
+  const sz=Math.round(Math.min(cs*0.46,220));
   const photoEl=src?`<img class="player-photo" src="${src}" style="width:${sz}px;height:${sz}px" alt="${cp}">`:'';
   const displayName=picking?(cp||''):((cp||'')+'!');
   const nameColor=picking?'rgba(212,160,23,.28)':'var(--gold2)';
-  sp.innerHTML=`${photoEl}<div style="font-family:'Pacifico',cursive;font-size:clamp(13px,2.2vw,20px);color:${nameColor};text-shadow:1px 1px 0 rgba(0,0,0,.5),0 0 14px rgba(212,160,23,.4);line-height:1.25;text-align:center;">${displayName}</div>`;
+  const nameSz=Math.round(Math.min(cs*0.055,30));
+  sp.innerHTML=`${photoEl}<div style="font-family:'Pacifico',cursive;font-size:${nameSz}px;color:${nameColor};text-shadow:1px 1px 0 rgba(0,0,0,.5),0 0 14px rgba(212,160,23,.4);line-height:1.25;text-align:center;">${displayName}</div>`;
   const wh=document.getElementById('wHint');
   if(wh&&!spinning&&!pending&&cp)wh.textContent='לחץ/י על הגלגל כדי לסובב';
   else if(wh)wh.textContent='';
