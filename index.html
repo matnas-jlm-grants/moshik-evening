@@ -444,7 +444,7 @@ const NEXT_BTNS=["יעלה ויבוא השחקן הבא","לבמה – הכוכ�
 let participants=[],questions={},lyrics={},scores={},photos={},currentFont='';
 let cp=null,spinning=false,picking=false,sel=null,pending=false,Q='';
 let btnIdx=0,prevScreen='setup',editSeg=0,selSong='';
-let turnCount=0,stealAvailable=false,currentPts=0;
+let turnCount=0,stealAvailable=false,currentPts=0,stealAfterQ=false,isPassTurn=false;
 let turnQueue=[];
 let songQueue=[];
 let currentSong='';
@@ -528,12 +528,11 @@ function spin(){
     sel=fs;const seg=WHEEL[fs];
     pending=true;updateTopRow();updateWheelCursor();
     setTimeout(()=>{
-      if(seg.key==='pass'){nextPlayer();return;}
-      turnCount++;
-      if(turnCount%5===0)stealAvailable=true;
-      currentPts=seg.val||750;
-      if(seg.key==='steal'){showStealOverlay(()=>nextPlayer());return;}
       if(seg.key==='song_id'){showSongId(getNextSong());return;}
+      turnCount++;if(turnCount%5===0)stealAvailable=true;
+      currentPts=seg.val||750;
+      if(seg.key==='pass')isPassTurn=true;
+      if(seg.key==='steal'){stealAfterQ=true;stealAvailable=false;}
       Q=questions.truth[Math.floor(Math.random()*questions.truth.length)]||'';
       if(stealAvailable){showStealBanner(()=>showQuestion());}
       else{showQuestion();}
@@ -543,7 +542,7 @@ function spin(){
 }
 
 function nextPlayer(){
-  pending=false;sel=null;cp=null;
+  pending=false;sel=null;cp=null;stealAfterQ=false;isPassTurn=false;
   updatePhotoZone(null,false);updateTopRow();updateWheelCursor();
 }
 
@@ -591,8 +590,12 @@ function showStealOverlay(onDone){
 }
 
 function showQuestion(){
-  document.getElementById('qBadge').textContent='שאלה – '+cp;
-  document.getElementById('qPts').textContent=currentPts.toLocaleString()+' נקודות';
+  const badge=stealAfterQ?'שאלה + גנבה – '+cp:isPassTurn?'שאלה (העברה) – '+cp:'שאלה – '+cp;
+  document.getElementById('qBadge').textContent=badge;
+  let ptsLine=currentPts.toLocaleString()+' נקודות';
+  if(isPassTurn)ptsLine+=' · ניתן להעביר לאחר לענות — הנקודות שלך';
+  if(stealAfterQ)ptsLine+=' · לאחר מכן תבחר ממי לגנוב';
+  document.getElementById('qPts').textContent=ptsLine;
   document.getElementById('qText').textContent=Q;
   document.getElementById('qOverlay').classList.remove('hidden');
   const qb=document.getElementById('qBulbs');if(qb&&qb.childElementCount===0)createFrameBulbs(qb);
@@ -785,10 +788,15 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('editQGame').onclick=()=>{prevScreen='game';setES(0);showScreen('edit');};
   document.getElementById('scoreBtn').onclick=()=>{renderScoreboard();showScreen('scoreboard');};
 
+  function afterQuestion(){
+    if(stealAfterQ){stealAfterQ=false;setTimeout(()=>showStealOverlay(()=>nextPlayer()),300);}
+    else nextPlayer();
+  }
+
   document.getElementById('doneBtn').onclick=()=>{
     document.getElementById('qOverlay').classList.add('hidden');
     scores[cp]=(scores[cp]||0)+currentPts;saveData();showPointsPopup('+'+currentPts.toLocaleString());
-    setTimeout(()=>nextPlayer(),200);
+    setTimeout(afterQuestion,200);
   };
 
   document.getElementById('doubleBtn').onclick=()=>{
@@ -803,10 +811,10 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('taskDoneBtn').onclick=()=>{
     document.getElementById('taskOverlay').classList.add('hidden');
     const dbl=currentPts*2;scores[cp]=(scores[cp]||0)+dbl;saveData();showPointsPopup('+'+dbl.toLocaleString());
-    setTimeout(()=>nextPlayer(),200);
+    setTimeout(afterQuestion,200);
   };
-  document.getElementById('taskSkipBtn').onclick=()=>{document.getElementById('taskOverlay').classList.add('hidden');nextPlayer();};
-  document.getElementById('skipBtn').onclick=()=>{document.getElementById('qOverlay').classList.add('hidden');nextPlayer();};
+  document.getElementById('taskSkipBtn').onclick=()=>{document.getElementById('taskOverlay').classList.add('hidden');afterQuestion();};
+  document.getElementById('skipBtn').onclick=()=>{document.getElementById('qOverlay').classList.add('hidden');afterQuestion();};
 
   document.getElementById('songIdCorrectBtn').onclick=()=>{
     document.getElementById('clipAudio').pause();
