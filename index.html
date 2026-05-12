@@ -445,6 +445,7 @@ let participants=[],questions={},lyrics={},scores={},photos={},currentFont='';
 let cp=null,spinning=false,picking=false,sel=null,pending=false,Q='';
 let btnIdx=0,prevScreen='setup',editSeg=0,selSong='';
 let turnCount=0,stealAvailable=false,currentPts=0;
+let turnQueue=[];
 let songClips={};
 
 function loadData(){try{const p=localStorage.getItem('m-p');participants=p?JSON.parse(p):[...DEFAULT_P];const q=localStorage.getItem('m-q');questions=q?JSON.parse(q):JSON.parse(JSON.stringify(DQ));const l=localStorage.getItem('m-l');lyrics=l?JSON.parse(l):{};const s=localStorage.getItem('m-sc');scores=s?JSON.parse(s):{};const ph=localStorage.getItem('m-ph');photos=ph?JSON.parse(ph):{};const f=localStorage.getItem('m-font');if(f)currentFont=f;}catch(e){participants=[...DEFAULT_P];questions=JSON.parse(JSON.stringify(DQ));lyrics={};scores={};photos={};}}
@@ -649,13 +650,22 @@ function showPhotoSplash(name,src){
   div.onclick=()=>{div.style.transition='opacity .3s';div.style.opacity='0';setTimeout(()=>div.remove(),300);};
 }
 
+function getNextInQueue(){
+  turnQueue=turnQueue.filter(p=>participants.includes(p));
+  if(!turnQueue.length){
+    turnQueue=[...participants];
+    for(let i=turnQueue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[turnQueue[i],turnQueue[j]]=[turnQueue[j],turnQueue[i]];}
+  }
+  return turnQueue.shift();
+}
 function pickP(){
   if(picking||!participants.length)return;
   picking=true;sel=null;pending=false;updatePhotoZone(null,true);
+  const nextP=getNextInQueue();
   let count=0,delay=60,max=12+Math.floor(Math.random()*8);
   function cycle(){cp=participants[Math.floor(Math.random()*participants.length)];updateTopRow();count++;
     if(count<max){delay=Math.min(delay*1.1,350);setTimeout(cycle,delay);}
-    else{cp=participants[Math.floor(Math.random()*participants.length)];picking=false;psnd();
+    else{cp=nextP;picking=false;psnd();
       showPhotoSplash(cp,photos[cp]||null);
       updatePhotoZone(cp,false);updateTopRow();updateWheelCursor();
     }
@@ -683,7 +693,7 @@ function updateTopRow(){
   }
   tr.style.display='flex';if(br)br.innerHTML='';
   const displayName=(cp||'')+'!';
-  tr.innerHTML=`${makeTL(7)}<div class="ticket"><div class="ticket-stars">★ ★ ★</div><div class="ticket-lbl">${picking?'בוחר...':'הזרקור על'}</div><div class="ticket-name${picking?' picking':''}">${picking?(cp||''):displayName}</div><div class="ticket-stars">★ ★ ★</div></div>${makeTL(7)}`;
+  tr.innerHTML=`${makeTL(6)}<div style="font-family:'Pacifico',cursive;font-size:clamp(22px,5vw,54px);color:${picking?'rgba(212,160,23,.3)':'var(--gold2)'};text-shadow:2px 2px 0 rgba(0,0,0,.55),0 0 28px rgba(212,160,23,.45);line-height:1;padding:0 10px;">${picking?(cp||''):displayName}</div>${makeTL(6)}`;
   const wh=document.getElementById('wHint');
   if(wh&&!spinning&&!pending&&cp)wh.textContent='לחץ/י על הגלגל כדי לסובב';
   else if(wh)wh.textContent='';
