@@ -418,20 +418,20 @@ audio{display:none;}
 <script>
 const CATS=[{key:"truth",label:"שאלה",icls:"it"},{key:"dare",label:"משימה",icls:"id"},{key:"song",label:"שיר",icls:"is"}];
 const WHEEL=[
-  {key:"pts",val:500, color:"#1565C0"},
-  {key:"pts",val:550, color:"#558B2F"},
-  {key:"pass",val:0,  color:"#4A148C"},
-  {key:"pts",val:600, color:"#AD1457"},
-  {key:"pts",val:650, color:"#E65100"},
-  {key:"song_id",val:750,color:"#006064"},
-  {key:"pts",val:700, color:"#6A1B9A"},
-  {key:"pts",val:750, color:"#00695C"},
-  {key:"steal",val:0, color:"#7B0000"},
-  {key:"pts",val:800, color:"#283593"},
-  {key:"pts",val:850, color:"#BF360C"},
-  {key:"pass",val:0,  color:"#4A148C"},
-  {key:"pts",val:900, color:"#1B5E20"},
-  {key:"pts",val:1000,color:"#F57F17"},
+  {key:"song_id",val:500, color:"#00695C"},
+  {key:"pts",    val:600, color:"#AD1457"},
+  {key:"pass",   val:0,   color:"#4A148C"},
+  {key:"song_id",val:650, color:"#00838F"},
+  {key:"pts",    val:700, color:"#6A1B9A"},
+  {key:"song_id",val:750, color:"#006064"},
+  {key:"pts",    val:800, color:"#283593"},
+  {key:"steal",  val:0,   color:"#7B0000"},
+  {key:"song_id",val:850, color:"#0097A7"},
+  {key:"pts",    val:900, color:"#1B5E20"},
+  {key:"pass",   val:0,   color:"#4A148C"},
+  {key:"song_id",val:950, color:"#26C6DA"},
+  {key:"pts",    val:1000,color:"#F57F17"},
+  {key:"song_id",val:1100,color:"#004D40"},
 ];
 const DQ={
   truth:["איזה שיר גילטי פלז'ר את/ה שומע/ת לבד באוטו בדרך לעבודה?","מהו הכישרון הכי חסר תועלת שיש לך?","מה האוכל שאת/ה יכול/ה לאכול בלי הפסקה?","מה הרגל המוזר שיש לך שרק המשפחה יודעת עליו?","מה הדבר הראשון שאת/ה עושה כשנכנסת הביתה אחרי יום עמוס?","אם יכולת להוציא חוק מחוזי אחד שקשור לאוכל – מה הוא היה?","אם חייבת לשנות את שמך – מה היית בוחר/ת?","מה הדבר הכי מוזר שקרה לך בזמן שיחת זום כשהמצלמה הייתה דלוקה?","מהי ההודעה הכי מביכה ששלחת בטעות לקבוצת הווטסאפ של העבודה?","ספר/י על פגישה רצינית שבה לא יכולת להפסיק לצחוק – ומה התירוץ שמצאת?","מהו התירוץ הכי מוזר שהשתמשת בו כדי לצאת מוקדם מישיבה?","מה הדבר הכי טיפשי שעשית שעדיין מצחיק אותך?","אם היית נתקע/ת במעלית עם אחד המנהלים ל-3 שעות – מי זה היה ולמה?","מי בחדר הזה הכי מפתיע אותך – ולמה?","מהי הטעות הכי מצחיקה שכתבת בטעות במייל בתפוצה רחבה?","מה הדבר שהיית רוצה להגיד למישהו בחדר שעוד לא אמרת?","מה הרגע שבו הרגשת הכי גאה בעצמך – לא קשור לעבודה?","מה הדבר שעוד לא עשית בחיים ואת/ה חייב/ת לעשות?","מה הדבר הכי מוזר שמושיק ביקש ממך?","מה למדת ממושיק שתיקח/י איתך לכל החיים?","מה היית אומר/ת על מושיק בגב שלו שלא אמרת בפניו?"],
@@ -446,6 +446,7 @@ let cp=null,spinning=false,picking=false,sel=null,pending=false,Q='';
 let btnIdx=0,prevScreen='setup',editSeg=0,selSong='';
 let turnCount=0,stealAvailable=false,currentPts=0;
 let turnQueue=[];
+let songQueue=[];
 let currentSong='';
 let songClips={};
 
@@ -526,15 +527,17 @@ function spin(){
     const fs=Math.floor(((((-rot)%PI2)+PI2)%PI2)/SW)%NW;
     sel=fs;const seg=WHEEL[fs];
     pending=true;updateTopRow();updateWheelCursor();
-    if(seg.key==='pass'){setTimeout(()=>nextPlayer(),700);return;}
-    turnCount++;
-    if(turnCount%5===0)stealAvailable=true;
-    currentPts=seg.val||750;
-    if(seg.key==='steal'){showStealOverlay(()=>nextPlayer());return;}
-    if(seg.key==='song_id'){showSongId();return;}
-    Q=questions.truth[Math.floor(Math.random()*questions.truth.length)]||'';
-    if(stealAvailable){showStealBanner(()=>showQuestion());}
-    else{showQuestion();}
+    setTimeout(()=>{
+      if(seg.key==='pass'){nextPlayer();return;}
+      turnCount++;
+      if(turnCount%5===0)stealAvailable=true;
+      currentPts=seg.val||750;
+      if(seg.key==='steal'){showStealOverlay(()=>nextPlayer());return;}
+      if(seg.key==='song_id'){showSongId(getNextSong());return;}
+      Q=questions.truth[Math.floor(Math.random()*questions.truth.length)]||'';
+      if(stealAvailable){showStealBanner(()=>showQuestion());}
+      else{showQuestion();}
+    },1500);
   }
   aid=requestAnimationFrame(anim);
 }
@@ -595,8 +598,9 @@ function showQuestion(){
   const qb=document.getElementById('qBulbs');if(qb&&qb.childElementCount===0)createFrameBulbs(qb);
 }
 
-function showSongId(){
-  const songs=questions.song||[];
+function showSongId(specificSong){
+  if(specificSong)currentSong=specificSong;
+  const songs=specificSong?[specificSong]:(questions.song||[]);
   document.getElementById('songIdPts').textContent=currentPts.toLocaleString()+' נקודות';
   const list=document.getElementById('songIdList');
   const ca=document.getElementById('clipAudio');
@@ -652,6 +656,12 @@ function showPhotoSplash(name,src){
   div.onclick=()=>{div.style.transition='opacity .3s';div.style.opacity='0';setTimeout(()=>div.remove(),300);};
 }
 
+function getNextSong(){
+  const songs=questions.song||[];if(!songs.length)return null;
+  songQueue=songQueue.filter(s=>songs.includes(s));
+  if(!songQueue.length){songQueue=[...songs];for(let i=songQueue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[songQueue[i],songQueue[j]]=[songQueue[j],songQueue[i]];}}
+  return songQueue.shift();
+}
 function getNextInQueue(){
   turnQueue=turnQueue.filter(p=>participants.includes(p));
   if(!turnQueue.length){
