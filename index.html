@@ -506,11 +506,11 @@ function parseSong(s){const d=s.indexOf('–');return d>-1?{name:s.slice(0,d).tr
 
 function showPhotoSplash(name,src){
   const ex=document.getElementById('photoSplash');if(ex)ex.remove();
-  const sz=Math.round(Math.min(window.innerHeight*.42,window.innerWidth*.58,300));
-  const div=document.createElement('div');div.className='photo-splash';div.id='photoSplash';
-  div.innerHTML=`<img class="splash-img" src="${src}" style="width:${sz}px;height:${sz}px" alt="${name}"><div class="splash-name">${name}!</div>`;
+  const div=document.createElement('div');div.className='photo-splash';div.id='photoSplash';div.style.cursor='pointer';
+  if(src){const sz=Math.round(Math.min(window.innerHeight*.42,window.innerWidth*.58,300));div.innerHTML=`<img class="splash-img" src="${src}" style="width:${sz}px;height:${sz}px" alt="${name}"><div class="splash-name">${name}!</div><div style="font-size:13px;color:rgba(212,160,23,.5);margin-top:8px;letter-spacing:1px;">לחץ להמשך</div>`;}
+  else{div.innerHTML=`<div class="splash-name" style="font-size:clamp(40px,10vw,90px)">${name}!</div><div style="font-size:13px;color:rgba(212,160,23,.5);margin-top:8px;letter-spacing:1px;">לחץ להמשך</div>`;}
   document.body.appendChild(div);
-  setTimeout(()=>{div.style.transition='opacity .45s';div.style.opacity='0';setTimeout(()=>div.remove(),450);},2400);
+  div.onclick=()=>{div.style.transition='opacity .3s';div.style.opacity='0';setTimeout(()=>div.remove(),300);};
 }
 
 function pickP(){
@@ -521,7 +521,7 @@ function pickP(){
     if(count<max){delay=Math.min(delay*1.1,350);setTimeout(cycle,delay);}
     else{cp=participants[Math.floor(Math.random()*participants.length)];picking=false;psnd();
       if(SONG_MAP.hasOwnProperty(cp)){isSongP=true;const idx=SONG_MAP[cp];const list=questions.song||[];Q=list[idx%list.length]||list[0]||'';sel=WHEEL.findIndex(w=>w.key==='song');pending=true;}
-      if(photos[cp])showPhotoSplash(cp,photos[cp]);
+      showPhotoSplash(cp,photos[cp]||null);
       updatePhotoZone(cp,false);updateTopRow();updateWheelCursor();
     }
   }cycle();
