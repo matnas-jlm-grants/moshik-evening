@@ -446,6 +446,7 @@ let cp=null,spinning=false,picking=false,sel=null,pending=false,Q='';
 let btnIdx=0,prevScreen='setup',editSeg=0,selSong='';
 let turnCount=0,stealAvailable=false,currentPts=0;
 let turnQueue=[];
+let currentSong='';
 let songClips={};
 
 function loadData(){try{const p=localStorage.getItem('m-p');participants=p?JSON.parse(p):[...DEFAULT_P];const q=localStorage.getItem('m-q');questions=q?JSON.parse(q):JSON.parse(JSON.stringify(DQ));const l=localStorage.getItem('m-l');lyrics=l?JSON.parse(l):{};const s=localStorage.getItem('m-sc');scores=s?JSON.parse(s):{};const ph=localStorage.getItem('m-ph');photos=ph?JSON.parse(ph):{};const f=localStorage.getItem('m-font');if(f)currentFont=f;}catch(e){participants=[...DEFAULT_P];questions=JSON.parse(JSON.stringify(DQ));lyrics={};scores={};photos={};}}
@@ -607,6 +608,7 @@ function showSongId(){
   list.querySelectorAll('.btn-stop').forEach(b=>b.style.display='none');
   list.querySelectorAll('.btn-play').forEach(btn=>{
     btn.onclick=()=>{
+      currentSong=btn.dataset.song;
       ca.pause();if(songClips[btn.dataset.song]){ca.src=songClips[btn.dataset.song];ca.play().catch(()=>{});}
       list.querySelectorAll('.btn-stop').forEach(b=>b.style.display='none');
       list.querySelectorAll('.btn-play').forEach(b=>b.style.display='');
@@ -620,7 +622,7 @@ function showSongId(){
   document.getElementById('songIdOverlay').classList.remove('hidden');
 }
 
-function showWinnerSelect(pts){
+function showWinnerSelect(pts,afterCb){
   const ov=document.getElementById('winnerOverlay');
   const list=document.getElementById('winnerList');
   list.innerHTML=participants.map(p=>`<div class="winner-item" data-name="${p}">${p}</div>`).join('');
@@ -631,7 +633,7 @@ function showWinnerSelect(pts){
       ov.classList.add('hidden');
       document.getElementById('clipAudio').pause();
       document.getElementById('songIdOverlay').classList.add('hidden');
-      nextPlayer();
+      if(afterCb)afterCb();else nextPlayer();
     };
   });
   ov.classList.remove('hidden');
@@ -801,7 +803,14 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('taskSkipBtn').onclick=()=>{document.getElementById('taskOverlay').classList.add('hidden');nextPlayer();};
   document.getElementById('skipBtn').onclick=()=>{document.getElementById('qOverlay').classList.add('hidden');nextPlayer();};
 
-  document.getElementById('songIdCorrectBtn').onclick=()=>{document.getElementById('clipAudio').pause();showWinnerSelect(currentPts);};
+  document.getElementById('songIdCorrectBtn').onclick=()=>{
+    document.getElementById('clipAudio').pause();
+    const guessedSong=currentSong;
+    showWinnerSelect(currentPts,()=>{
+      if(guessedSong){Q=guessedSong;showLyrics();}
+      else nextPlayer();
+    });
+  };
   document.getElementById('songIdNobodyBtn').onclick=()=>{document.getElementById('clipAudio').pause();document.getElementById('songIdOverlay').classList.add('hidden');nextPlayer();};
 
   document.getElementById('lyricsDone').onclick=()=>{pending=false;sel=null;cp=null;showScreen('game');updatePhotoZone(null,false);updateTopRow();updateWheelCursor();document.getElementById('wHint').textContent='';};
