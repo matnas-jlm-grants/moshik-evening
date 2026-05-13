@@ -190,6 +190,19 @@ textarea{resize:vertical;min-height:56px;}
 .lyrics-text{column-width:clamp(220px,24vw,340px);column-fill:auto;height:100%;font-size:clamp(14px,2.1vw,22px);line-height:2.1;color:var(--cream);white-space:pre-wrap;font-weight:700;}
 .lyrics-empty{color:rgba(255,248,231,.3);font-size:16px;padding:24px;}
 .lyr-footer{flex-shrink:0;display:flex;justify-content:center;padding:10px 16px 14px;}
+/* SETUP */
+#setup{overflow:hidden;padding:8px 14px;}
+#setup .box{max-width:min(96vw,960px);display:flex;flex-direction:column;height:calc(100vh - 16px);padding:12px 16px;}
+#setup .show-title{font-size:clamp(14px,2.6vw,26px);margin-bottom:1px;}
+#setup .show-sub{margin-bottom:4px;}
+#setup .bulbs{margin:2px 0 6px;}
+#setup .stat-row{margin-bottom:8px;flex-shrink:0;}
+#setup .stat{padding:5px 3px;}
+#setup .stat-n{font-size:18px;}
+.setup-main{display:flex;gap:14px;flex:1;min-height:0;}
+.setup-col-p{display:flex;flex-direction:column;flex:3;min-width:0;}
+.setup-col-c{display:flex;flex-direction:column;flex:2;min-width:0;justify-content:flex-end;gap:8px;}
+#setup .chips{flex:1;min-height:0;max-height:none;overflow-y:auto;margin-bottom:6px;}
 .btn-nxtp{font-family:'Pacifico',cursive;font-size:clamp(13px,2vw,19px);padding:11px 28px;background:linear-gradient(135deg,#5a0000,#8b0000);color:var(--gold2);border:2px solid rgba(212,160,23,.3);border-radius:50px;cursor:pointer;box-shadow:0 3px 0 #2a0000;transition:all .15s;}
 .btn-nxtp:hover{transform:translateY(-1px);}
 
@@ -240,16 +253,10 @@ audio{display:none;}
 
 <div id="setup" class="screen">
 <div class="box">
-  <div class="show-title">ערב חברתי<br>בסימן מושיק</div>
-  <div class="show-sub">שאלות · משימות · שירים</div>
-  <div class="bulbs" id="blbs"></div>
-  <div class="section-lbl">פונט</div>
-  <div class="font-picker">
-    <button class="fp-btn active" data-font=""><span style="font-family:'Secular One'">א</span>Secular</button>
-    <button class="fp-btn" data-font="f-frank"><span style="font-family:'Frank Ruhl Libre'">א</span>Frank Ruhl</button>
-    <button class="fp-btn" data-font="f-heebo"><span style="font-family:'Heebo'">א</span>Heebo</button>
-    <button class="fp-btn" data-font="f-varela"><span style="font-family:'Varela Round'">א</span>Varela</button>
-    <button class="fp-btn" data-font="f-rubik"><span style="font-family:'Rubik'">א</span>Rubik</button>
+  <div style="text-align:center;flex-shrink:0;">
+    <div class="show-title">ערב חברתי בסימן מושיק</div>
+    <div class="show-sub">שאלות · משימות · שירים</div>
+    <div class="bulbs" id="blbs"></div>
   </div>
   <div class="stat-row">
     <div class="stat"><div class="stat-n" id="cntT">0</div><div class="stat-l">שאלות</div></div>
@@ -257,17 +264,23 @@ audio{display:none;}
     <div class="stat"><div class="stat-n" id="cntS">0</div><div class="stat-l">שירים</div></div>
     <div class="stat"><div class="stat-n" id="cntM" style="color:#FFAB91;">0</div><div class="stat-l">מושיק</div></div>
   </div>
-  <div class="section-lbl">משתתפים (<span id="pcnt">0</span>) — לחץ על עיגול לתמונה</div>
-  <div class="chips" id="chips"></div>
-  <div class="inp-row"><input id="ni" placeholder="הוסף משתתף..."><button class="btn btn-sm" id="addPBtn">הוסף</button></div>
-  <div style="display:flex;gap:8px;margin-bottom:10px;">
-    <button class="btn" id="exportBtn" style="font-size:12px;color:var(--gold3);border-color:rgba(212,160,23,.3)">ייצא נתונים</button>
-    <label class="btn" for="importInput" style="cursor:pointer;font-size:12px;color:#B8CC8A;border-color:rgba(74,94,42,.4)">ייבא נתונים</label>
-    <input type="file" id="importInput" accept=".json">
+  <div class="setup-main">
+    <div class="setup-col-p">
+      <div class="section-lbl">משתתפים (<span id="pcnt">0</span>) — לחץ על עיגול לתמונה</div>
+      <div class="chips" id="chips"></div>
+      <div class="inp-row" style="margin-bottom:0;"><input id="ni" placeholder="הוסף משתתף..."><button class="btn btn-sm" id="addPBtn">הוסף</button></div>
+    </div>
+    <div class="setup-col-c">
+      <div style="display:flex;gap:8px;">
+        <button class="btn" id="exportBtn" style="flex:1;font-size:12px;color:var(--gold3);border-color:rgba(212,160,23,.3)">ייצא</button>
+        <label class="btn" for="importInput" style="flex:1;cursor:pointer;font-size:12px;color:#B8CC8A;border-color:rgba(74,94,42,.4);text-align:center;">ייבא</label>
+        <input type="file" id="importInput" accept=".json">
+      </div>
+      <button class="btn" id="editQBtn" style="color:var(--gold3);border-color:rgba(212,160,23,.3);font-size:13px;">ערוך שאלות ומשימות</button>
+      <button class="btn-gold" id="startBtn">עולים על הבמה – התחל</button>
+      <div class="saved-badge" id="savedBadge"></div>
+    </div>
   </div>
-  <button class="btn" id="editQBtn" style="width:100%;margin-bottom:9px;color:var(--gold3);border-color:rgba(212,160,23,.3);font-size:13px">ערוך שאלות ומשימות</button>
-  <button class="btn-gold" id="startBtn">עולים על הבמה – התחל</button>
-  <div class="saved-badge" id="savedBadge"></div>
 </div>
 </div>
 
