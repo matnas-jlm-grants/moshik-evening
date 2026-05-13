@@ -277,6 +277,7 @@ audio{display:none;}
         <input type="file" id="importInput" accept=".json">
       </div>
       <button class="btn" id="editQBtn" style="color:var(--gold3);border-color:rgba(212,160,23,.3);font-size:13px;">ערוך שאלות ומשימות</button>
+      <button class="btn btn-danger" id="resetGameBtn" style="font-size:13px;">אפס משחק מחדש</button>
       <button class="btn-gold" id="startBtn">עולים על הבמה – התחל</button>
       <div class="saved-badge" id="savedBadge"></div>
     </div>
@@ -841,6 +842,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   document.getElementById('editQBtn').onclick=()=>{prevScreen='setup';setES(0);showScreen('edit');};
   document.getElementById('exportBtn').onclick=exportData;
   document.getElementById('importInput').onchange=e=>{const f=e.target.files[0];if(f){importData(f);e.target.value='';}};
+  document.getElementById('resetGameBtn').onclick=()=>{if(!confirm('לאפס ניקוד וסדר תורות?'))return;scores={};turnQueue=[];songQueue=[];turnCount=0;stealAvailable=false;saveData();renderSetup();};
   document.getElementById('startBtn').onclick=()=>{if(participants.length<2)return;showScreen('game');initGame();};
   document.getElementById('wheelRing').onclick=spin;
   document.getElementById('toSetup').onclick=()=>{if(aid)cancelAnimationFrame(aid);spinning=false;closeAllOverlays();showScreen('setup');renderSetup();};
