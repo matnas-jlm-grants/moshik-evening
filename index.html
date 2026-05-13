@@ -187,7 +187,7 @@ textarea{resize:vertical;min-height:56px;}
 .lyrics-title{font-family:'Pacifico',cursive;font-size:clamp(15px,2.2vw,24px);color:var(--gold2);}
 .lyrics-artist{font-size:clamp(11px,1.4vw,14px);color:var(--silver);opacity:.8;}
 .lyr-body{flex:1;min-height:0;overflow-x:auto;overflow-y:hidden;padding:14px 20px 0;}
-.lyrics-text{column-width:clamp(220px,24vw,340px);column-fill:auto;height:100%;font-size:clamp(14px,2.1vw,22px);line-height:2.1;color:var(--cream);white-space:pre-wrap;font-weight:700;}
+.lyrics-text{column-width:clamp(200px,22vw,300px);column-fill:auto;height:100%;font-size:clamp(11px,1.5vw,16px);line-height:1.55;color:var(--cream);white-space:pre-wrap;font-weight:700;}
 .lyrics-empty{color:rgba(255,248,231,.3);font-size:16px;padding:24px;}
 .lyr-footer{flex-shrink:0;display:flex;justify-content:center;padding:10px 16px 14px;}
 /* SETUP */
@@ -483,7 +483,7 @@ const NEXT_BTNS=["יעלה ויבוא השחקן הבא","לבמה – הכוכ�
 let participants=[],questions={},lyrics={},scores={},photos={},currentFont='';
 let cp=null,spinning=false,picking=false,sel=null,pending=false,Q='';
 let btnIdx=0,prevScreen='setup',editSeg=0,selSong='';
-let turnCount=0,stealAvailable=false,currentPts=0,stealAfterQ=false,isPassTurn=false,isMoshikTurn=false;
+let turnCount=0,stealAvailable=false,currentPts=0,stealAfterQ=false,isPassTurn=false,isMoshikTurn=false,turnsSinceLastSong=4;
 let turnQueue=[];
 let songQueue=[];
 let currentSong='';
@@ -591,8 +591,8 @@ function spin(){
     pending=true;updateTopRow();updateWheelCursor();
     setTimeout(()=>{
       currentPts=seg.val||500;
-      if(seg.key==='song_id'){const pin=pinnedSongs[cp];const songs=questions.song||[];const song=pin&&songs.includes(pin)?pin:getNextSong();showSongId(song);return;}
-      turnCount++;if(turnCount%5===0)stealAvailable=true;
+      if(seg.key==='song_id'){if(turnsSinceLastSong>=4){turnsSinceLastSong=0;const pin=pinnedSongs[cp];const songs=questions.song||[];const song=pin&&songs.includes(pin)?pin:getNextSong();showSongId(song);return;}const ptsSeg=WHEEL.filter(s=>s.key==='pts');currentPts=ptsSeg[Math.floor(Math.random()*ptsSeg.length)].val||600;}
+      turnsSinceLastSong++;turnCount++;if(turnCount%5===0)stealAvailable=true;
       if(seg.key==='pass')isPassTurn=true;
       if(seg.key==='steal'){stealAfterQ=true;stealAvailable=false;}
       if(seg.key==='moshik')isMoshikTurn=true;
@@ -834,7 +834,7 @@ function closeAllOverlays(){
 function initGame(){
   calcCS();const wc=document.getElementById('wc');if(wc){wc.width=cs;wc.height=cs;}
   draw(rot);cp=null;spinning=false;picking=false;sel=null;pending=false;
-  turnCount=0;stealAvailable=false;currentPts=0;
+  turnCount=0;stealAvailable=false;currentPts=0;turnsSinceLastSong=4;
   document.getElementById('wHint').textContent='';
   updateTopRow();updateWheelCursor();
 }
@@ -849,7 +849,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   document.getElementById('editQBtn').onclick=()=>{prevScreen='setup';setES(0);showScreen('edit');};
   document.getElementById('exportBtn').onclick=exportData;
   document.getElementById('importInput').onchange=e=>{const f=e.target.files[0];if(f){importData(f);e.target.value='';}};
-  document.getElementById('resetGameBtn').onclick=()=>{if(!confirm('לאפס ניקוד וסדר תורות?'))return;scores={};turnQueue=[];songQueue=[];turnCount=0;stealAvailable=false;saveData();renderSetup();};
+  document.getElementById('resetGameBtn').onclick=()=>{if(!confirm('לאפס ניקוד וסדר תורות?'))return;scores={};turnQueue=[];songQueue=[];turnCount=0;stealAvailable=false;turnsSinceLastSong=4;saveData();renderSetup();};
   document.getElementById('startBtn').onclick=()=>{if(participants.length<2)return;showScreen('game');initGame();};
   document.getElementById('wheelRing').onclick=spin;
   document.getElementById('toSetup').onclick=()=>{if(aid)cancelAnimationFrame(aid);spinning=false;closeAllOverlays();showScreen('setup');renderSetup();};
