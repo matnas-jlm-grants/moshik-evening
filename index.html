@@ -775,9 +775,11 @@ function renderClips(){
     const pinnedTo=Object.entries(pinnedSongs).find(([p,sg])=>sg===s);
     const pinnedPlayer=pinnedTo?pinnedTo[0]:'';
     const opts=['<option value="">ללא שיוך</option>',...participants.map(p=>`<option value="${p}"${p===pinnedPlayer?' selected':''}>${p}</option>`)].join('');
-    return `<div class="clip-item"><span class="clip-name">${s}</span><span class="${has?'clip-ok':'clip-no'}">${has?'✓ נטען':'ללא קליפ'}</span><label class="btn btn-sm" style="cursor:pointer;font-size:11px;padding:4px 8px;">העלה<input type="file" accept="audio/*" data-song="${s}" style="display:none"></label><select class="pin-sel" data-song="${s}">${opts}</select></div>`;
+    const removeBtn=has?`<button class="btn btn-sm clip-del-btn" data-song="${s}" style="font-size:11px;padding:4px 8px;color:#f99;border-color:rgba(255,100,100,.3);">הסר</button>`:'';
+    return `<div class="clip-item"><span class="clip-name">${s}</span><span class="${has?'clip-ok':'clip-no'}">${has?'✓ נטען':'ללא קליפ'}</span><label class="btn btn-sm" style="cursor:pointer;font-size:11px;padding:4px 8px;">העלה<input type="file" accept="audio/*" data-song="${s}" style="display:none"></label>${removeBtn}<select class="pin-sel" data-song="${s}">${opts}</select></div>`;
   }).join('');
   cl.querySelectorAll('input[type=file]').forEach(inp=>{inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{songClips[inp.dataset.song]=ev.target.result;saveData();renderClips();};r.readAsDataURL(f);};});
+  cl.querySelectorAll('.clip-del-btn').forEach(btn=>{btn.onclick=()=>{delete songClips[btn.dataset.song];saveData();renderClips();};});
   cl.querySelectorAll('.pin-sel').forEach(sel=>{sel.onchange=()=>{const song=sel.dataset.song;Object.keys(pinnedSongs).forEach(p=>{if(pinnedSongs[p]===song)delete pinnedSongs[p];});if(sel.value)pinnedSongs[sel.value]=song;saveData();};});
 }
 
