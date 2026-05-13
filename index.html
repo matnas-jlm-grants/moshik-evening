@@ -181,12 +181,15 @@ textarea{resize:vertical;min-height:56px;}
 .sb-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
 
 /* LYRICS */
-#lyrics{background:rgba(10,0,3,.97);}
-.lyrics-box{width:100%;max-width:700px;text-align:center;}
-.lyrics-title{font-family:'Pacifico',cursive;font-size:clamp(20px,4vw,36px);color:var(--gold2);margin-bottom:5px;}
-.lyrics-artist{font-size:clamp(12px,1.8vw,17px);color:var(--silver);margin-bottom:14px;opacity:.8;}
-.lyrics-text{font-size:clamp(18px,3.5vw,34px);line-height:1.9;color:var(--cream);white-space:pre-wrap;font-weight:700;background:rgba(212,160,23,.08);border:2px solid rgba(212,160,23,.25);border-radius:var(--radius);padding:18px;max-height:55vh;overflow-y:auto;margin-bottom:14px;}
-.lyrics-empty{color:rgba(255,248,231,.3);font-size:16px;padding:24px;background:rgba(0,0,0,.25);border:1px dashed rgba(212,160,23,.2);border-radius:var(--radius);margin-bottom:14px;}
+#lyrics{background:rgba(10,0,3,.97);align-items:stretch;justify-content:flex-start;padding:0;overflow:hidden;}
+.lyr-hdr{flex-shrink:0;text-align:center;padding:8px 16px 6px;border-bottom:1px solid rgba(212,160,23,.18);}
+.lyr-ttl-row{display:flex;align-items:baseline;justify-content:center;gap:10px;flex-wrap:wrap;}
+.lyrics-title{font-family:'Pacifico',cursive;font-size:clamp(15px,2.2vw,24px);color:var(--gold2);}
+.lyrics-artist{font-size:clamp(11px,1.4vw,14px);color:var(--silver);opacity:.8;}
+.lyr-body{flex:1;min-height:0;overflow-x:auto;overflow-y:hidden;padding:14px 20px 0;}
+.lyrics-text{column-width:clamp(220px,24vw,340px);column-fill:auto;height:100%;font-size:clamp(14px,2.1vw,22px);line-height:2.1;color:var(--cream);white-space:pre-wrap;font-weight:700;}
+.lyrics-empty{color:rgba(255,248,231,.3);font-size:16px;padding:24px;}
+.lyr-footer{flex-shrink:0;display:flex;justify-content:center;padding:10px 16px 14px;}
 .btn-nxtp{font-family:'Pacifico',cursive;font-size:clamp(13px,2vw,19px);padding:11px 28px;background:linear-gradient(135deg,#5a0000,#8b0000);color:var(--gold2);border:2px solid rgba(212,160,23,.3);border-radius:50px;cursor:pointer;box-shadow:0 3px 0 #2a0000;transition:all .15s;}
 .btn-nxtp:hover{transform:translateY(-1px);}
 
@@ -386,11 +389,15 @@ audio{display:none;}
 </div>
 
 <div id="lyrics" class="screen hidden">
-  <div class="lyrics-box">
+  <div class="lyr-hdr">
     <div class="bulbs" id="lyrBulbs"></div>
-    <div class="lyrics-title" id="lyricsTitle"></div>
-    <div class="lyrics-artist" id="lyricsArtist"></div>
-    <div id="lyricsBody"></div>
+    <div class="lyr-ttl-row">
+      <span class="lyrics-title" id="lyricsTitle"></span>
+      <span class="lyrics-artist" id="lyricsArtist"></span>
+    </div>
+  </div>
+  <div class="lyr-body" id="lyricsBody"></div>
+  <div class="lyr-footer">
     <button class="btn-nxtp" id="lyricsDone">סיימנו – השחקן הבא</button>
   </div>
 </div>
