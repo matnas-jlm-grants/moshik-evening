@@ -248,6 +248,14 @@ textarea{resize:vertical;min-height:56px;}
 audio{display:none;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-thumb{background:rgba(212,160,23,.2);border-radius:2px;}
 .empty{text-align:center;padding:12px;color:rgba(255,248,231,.25);font-size:13px;}
+
+/* COVER */
+#cover{overflow:hidden;padding:0;background:#000;}
+.cover-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.cover-bottom{position:absolute;bottom:0;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:14px;padding:16px 20px 32px;background:linear-gradient(transparent,rgba(0,0,0,.8));}
+.cover-music-row{display:flex;align-items:center;gap:10px;}
+.cover-start-btn{font-family:'Pacifico',cursive;font-size:clamp(16px,2.5vw,26px);padding:12px 40px;background:linear-gradient(135deg,#D4A017,#F5C518);color:#3d0000;border:none;border-radius:12px;cursor:pointer;font-weight:900;box-shadow:0 4px 0 #7a5a00,0 0 30px rgba(245,197,24,.4);animation:coverpulse 2s ease-in-out infinite;}
+@keyframes coverpulse{0%,100%{transform:scale(1);box-shadow:0 4px 0 #7a5a00,0 0 20px rgba(245,197,24,.3);}50%{transform:scale(1.04);box-shadow:0 5px 0 #7a5a00,0 0 45px rgba(245,197,24,.65);}}
 </style>
 </head>
 <body id="body">
@@ -284,6 +292,17 @@ audio{display:none;}
     </div>
   </div>
 </div>
+</div>
+
+<div id="cover" class="screen hidden">
+  <img src="cover.jpg" class="cover-img" alt="">
+  <div class="cover-bottom">
+    <div class="cover-music-row">
+      <button class="mb-btn" id="coverMusicToggle">מוסיקה: כבוי</button>
+      <label class="ul-label" for="afInput">העלה MP3</label>
+    </div>
+    <button class="cover-start-btn" id="coverStartBtn">המשחק מתחיל ▶</button>
+  </div>
 </div>
 
 <input type="file" id="photoInputGlobal" accept="image/*">
@@ -521,7 +540,9 @@ async function compressPhoto(file){return new Promise(res=>{const canvas=documen
 function uploadPhotoFor(name){const inp=document.getElementById('photoInputGlobal');inp.onchange=async(e)=>{const f=e.target.files[0];if(!f)return;const b64=await compressPhoto(f);photos[name]=b64;saveData();IDB.set('photos',photos);renderSetup();inp.value='';};inp.click();}
 
 let audioMode='none',genOn=false,genLoop=null;
-function setupAudio(){const inp=document.getElementById('afInput'),aud=document.getElementById('bgAudio'),fn=document.getElementById('afName'),tog=document.getElementById('musicToggle');inp.onchange=e=>{const f=e.target.files[0];if(!f)return;aud.src=URL.createObjectURL(f);fn.textContent=f.name;audioMode='file';tog.textContent='מוסיקה: פועל';tog.classList.add('on');aud.play().catch(()=>{});};tog.onclick=()=>{if(audioMode==='file'){if(aud.paused){aud.play();tog.textContent='מוסיקה: פועל';tog.classList.add('on');}else{aud.pause();tog.textContent='מוסיקה: כבוי';tog.classList.remove('on');}}else{if(!genOn){genOn=true;startGen();tog.textContent='מוסיקה: פועל';tog.classList.add('on');}else{genOn=false;stopGen();tog.textContent='מוסיקה: כבוי';tog.classList.remove('on');}}};}
+function setMusicBtnState(on){['musicToggle','coverMusicToggle'].forEach(id=>{const b=document.getElementById(id);if(!b)return;b.textContent='מוסיקה: '+(on?'פועל':'כבוי');b.classList.toggle('on',on);});}
+function toggleMusic(){const aud=document.getElementById('bgAudio');if(audioMode==='file'){if(aud.paused){aud.currentTime=0;aud.play().catch(()=>{});setMusicBtnState(true);}else{aud.pause();setMusicBtnState(false);}}else{if(!genOn){genOn=true;startGen();setMusicBtnState(true);}else{genOn=false;stopGen();setMusicBtnState(false);}}}
+function setupAudio(){const inp=document.getElementById('afInput'),aud=document.getElementById('bgAudio'),fn=document.getElementById('afName');inp.onchange=e=>{const f=e.target.files[0];if(!f)return;aud.src=URL.createObjectURL(f);if(fn)fn.textContent=f.name;audioMode='file';aud.currentTime=0;aud.play().catch(()=>{});setMusicBtnState(true);};document.getElementById('musicToggle').onclick=toggleMusic;const ctog=document.getElementById('coverMusicToggle');if(ctog)ctog.onclick=toggleMusic;}
 function ac(){if(!window._ac)try{window._ac=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}return window._ac;}
 function startGen(){const a=ac();if(!a)return;if(a.state==='suspended')a.resume();stopGen();const bpm=126,b=60/bpm,mel=[523,659,784,659,523,440,494,523,659,784,880,784,659,523,587,523],bas=[131,131,165,131,131,110,123,131,131,165,220,165,165,131,147,131];let t=a.currentTime+0.05;function s(){if(!genOn)return;for(let i=0;i<mel.length;i++){const st=t+i*(b*0.5);const om=a.createOscillator(),gm=a.createGain();om.connect(gm);gm.connect(a.destination);om.type='sine';om.frequency.value=mel[i];gm.gain.setValueAtTime(0,st);gm.gain.linearRampToValueAtTime(0.07,st+0.02);gm.gain.exponentialRampToValueAtTime(0.001,st+b*0.45);om.start(st);om.stop(st+b*0.5);if(i%2===0){const ob=a.createOscillator(),gb=a.createGain();ob.connect(gb);gb.connect(a.destination);ob.type='triangle';ob.frequency.value=bas[i];gb.gain.setValueAtTime(0,st);gb.gain.linearRampToValueAtTime(0.05,st+0.03);gb.gain.exponentialRampToValueAtTime(0.001,st+b*0.9);ob.start(st);ob.stop(st+b);}}t+=mel.length*b*0.5;genLoop=setTimeout(s,(mel.length*b*0.5-0.3)*1000);}s();}
 function stopGen(){if(genLoop)clearTimeout(genLoop);genLoop=null;}
@@ -778,7 +799,7 @@ function showLyrics(){
 
 function renderScoreboard(){const sorted=[...participants].sort((a,b)=>(scores[b]||0)-(scores[a]||0));const list=document.getElementById('sbList');if(!list)return;list.innerHTML=sorted.map((p,i)=>{const s=scores[p]||0,src=photos[p];const rankCls=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':''+(i+1);const photoEl=src?`<img class="sb-photo" src="${src}" alt="${p}">`:`<div class="sb-photo-ph">👤</div>`;return `<div class="sb-item ${rankCls}">${photoEl}<div class="sb-rank">${medal}</div><div class="sb-name">${p}</div><div class="sb-score ${s===0?'sb-zero':''}">${s.toLocaleString()}</div></div>`;}).join('');}
 
-function showScreen(s){['setup','game','scoreboard','lyrics','edit'].forEach(id=>{document.getElementById(id).classList.toggle('hidden',id!==s);});}
+function showScreen(s){['cover','setup','game','scoreboard','lyrics','edit'].forEach(id=>{document.getElementById(id).classList.toggle('hidden',id!==s);});const bb=document.querySelector('.bottom-bar');if(bb)bb.style.display=s==='cover'?'none':'';}
 function renderSetup(){
   document.getElementById('cntT').textContent=questions.truth.length;
   document.getElementById('cntD').textContent=questions.dare.length;
@@ -846,7 +867,8 @@ function initGame(){
 window.addEventListener('DOMContentLoaded',async()=>{
   loadData();await loadClips();await loadPhotos();applyFont(currentFont);
   const blbs=document.getElementById('blbs');if(blbs)for(let i=0;i<14;i++){const d=document.createElement('span');d.className='bulb';blbs.appendChild(d);}
-  renderSetup();showScreen('setup');setupAudio();
+  renderSetup();showScreen('cover');setupAudio();
+  document.getElementById('coverStartBtn').onclick=()=>showScreen('setup');
   document.querySelectorAll('.fp-btn').forEach(b=>b.onclick=()=>applyFont(b.dataset.font));
   const ni=document.getElementById('ni');ni.onkeydown=e=>{if(e.key==='Enter')document.getElementById('addPBtn').click();};
   document.getElementById('addPBtn').onclick=()=>{const n=(ni.value||'').trim();if(n&&!participants.includes(n)){participants.push(n);ni.value='';saveData();renderSetup();}};
