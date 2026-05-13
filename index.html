@@ -546,9 +546,9 @@ function spin(){
     sel=fs;const seg=WHEEL[fs];
     pending=true;updateTopRow();updateWheelCursor();
     setTimeout(()=>{
+      currentPts=seg.val||500;
       if(seg.key==='song_id'){showSongId(getNextSong());return;}
       turnCount++;if(turnCount%5===0)stealAvailable=true;
-      currentPts=seg.val||750;
       if(seg.key==='pass')isPassTurn=true;
       if(seg.key==='steal'){stealAfterQ=true;stealAvailable=false;}
       if(seg.key==='moshik')isMoshikTurn=true;
