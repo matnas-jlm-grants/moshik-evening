@@ -503,14 +503,21 @@ async function loadClips(){
     else{const old=localStorage.getItem('m-cl');if(old){songClips=JSON.parse(old);await IDB.set('clips',songClips);localStorage.removeItem('m-cl');}}
   }catch(e){}
 }
+async function loadPhotos(){
+  try{
+    const p=await IDB.get('photos');
+    if(p){photos=p;}
+    else{const old=localStorage.getItem('m-ph');if(old){photos=JSON.parse(old);await IDB.set('photos',photos);localStorage.removeItem('m-ph');}}
+  }catch(e){}
+}
 
-function loadData(){try{const p=localStorage.getItem('m-p');participants=p?JSON.parse(p):[...DEFAULT_P];const q=localStorage.getItem('m-q');questions=q?JSON.parse(q):JSON.parse(JSON.stringify(DQ));if(!questions.moshik)questions.moshik=JSON.parse(JSON.stringify(DQ.moshik));const l=localStorage.getItem('m-l');lyrics=l?JSON.parse(l):{};const s=localStorage.getItem('m-sc');scores=s?JSON.parse(s):{};const ph=localStorage.getItem('m-ph');photos=ph?JSON.parse(ph):{};const ps=localStorage.getItem('m-ps');pinnedSongs=ps?JSON.parse(ps):{};const f=localStorage.getItem('m-font');if(f)currentFont=f;}catch(e){participants=[...DEFAULT_P];questions=JSON.parse(JSON.stringify(DQ));lyrics={};scores={};photos={};pinnedSongs={};}}
-function saveData(){try{localStorage.setItem('m-p',JSON.stringify(participants));localStorage.setItem('m-q',JSON.stringify(questions));localStorage.setItem('m-l',JSON.stringify(lyrics));localStorage.setItem('m-sc',JSON.stringify(scores));localStorage.setItem('m-ph',JSON.stringify(photos));localStorage.setItem('m-ps',JSON.stringify(pinnedSongs));const b=document.getElementById('savedBadge');if(b){b.textContent='נשמר';setTimeout(()=>{b.textContent='';},1500);}}catch(e){alert('אחסון מלא');}}
+function loadData(){try{const p=localStorage.getItem('m-p');participants=p?JSON.parse(p):[...DEFAULT_P];const q=localStorage.getItem('m-q');questions=q?JSON.parse(q):JSON.parse(JSON.stringify(DQ));if(!questions.moshik)questions.moshik=JSON.parse(JSON.stringify(DQ.moshik));const l=localStorage.getItem('m-l');lyrics=l?JSON.parse(l):{};const s=localStorage.getItem('m-sc');scores=s?JSON.parse(s):{};const ps=localStorage.getItem('m-ps');pinnedSongs=ps?JSON.parse(ps):{};const f=localStorage.getItem('m-font');if(f)currentFont=f;}catch(e){participants=[...DEFAULT_P];questions=JSON.parse(JSON.stringify(DQ));lyrics={};scores={};pinnedSongs={};}}
+function saveData(){try{localStorage.setItem('m-p',JSON.stringify(participants));localStorage.setItem('m-q',JSON.stringify(questions));localStorage.setItem('m-l',JSON.stringify(lyrics));localStorage.setItem('m-sc',JSON.stringify(scores));localStorage.setItem('m-ps',JSON.stringify(pinnedSongs));const b=document.getElementById('savedBadge');if(b){b.textContent='נשמר';setTimeout(()=>{b.textContent='';},1500);}}catch(e){alert('אחסון מלא');}}
 function applyFont(f){document.getElementById('body').className=f;currentFont=f;try{localStorage.setItem('m-font',f);}catch(e){}document.querySelectorAll('.fp-btn').forEach(b=>b.classList.toggle('active',b.dataset.font===f));}
 function exportData(){const data={participants,questions,lyrics,scores,photos,clips:songClips,pinnedSongs,font:currentFont};const blob=new Blob([JSON.stringify(data)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='moshik-game-'+new Date().toISOString().slice(0,10)+'.json';a.click();}
-function importData(file){const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(e.target.result);if(d.participants)participants=d.participants;if(d.questions)questions=d.questions;if(d.lyrics)lyrics=d.lyrics;if(d.scores)scores=d.scores;if(d.photos)photos=d.photos;if(d.clips){songClips=d.clips;IDB.set('clips',songClips);}if(d.pinnedSongs)pinnedSongs=d.pinnedSongs;if(d.font){currentFont=d.font;applyFont(d.font);}saveData();renderSetup();alert('הנתונים יובאו!');}catch(err){alert('שגיאה בייבוא');}};r.readAsText(file);}
+function importData(file){const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(e.target.result);if(d.participants)participants=d.participants;if(d.questions)questions=d.questions;if(d.lyrics)lyrics=d.lyrics;if(d.scores)scores=d.scores;if(d.photos){photos=d.photos;IDB.set('photos',photos);}if(d.clips){songClips=d.clips;IDB.set('clips',songClips);}if(d.pinnedSongs)pinnedSongs=d.pinnedSongs;if(d.font){currentFont=d.font;applyFont(d.font);}saveData();renderSetup();alert('הנתונים יובאו!');}catch(err){alert('שגיאה בייבוא');}};r.readAsText(file);}
 async function compressPhoto(file){return new Promise(res=>{const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d'),img=new Image();img.onload=()=>{const size=280;canvas.width=size;canvas.height=size;const s=Math.min(img.width,img.height),sx=(img.width-s)/2,sy=(img.height-s)/2;ctx.drawImage(img,sx,sy,s,s,0,0,size,size);res(canvas.toDataURL('image/jpeg',.72));};img.src=URL.createObjectURL(file);});}
-function uploadPhotoFor(name){const inp=document.getElementById('photoInputGlobal');inp.onchange=async(e)=>{const f=e.target.files[0];if(!f)return;const b64=await compressPhoto(f);photos[name]=b64;saveData();renderSetup();inp.value='';};inp.click();}
+function uploadPhotoFor(name){const inp=document.getElementById('photoInputGlobal');inp.onchange=async(e)=>{const f=e.target.files[0];if(!f)return;const b64=await compressPhoto(f);photos[name]=b64;saveData();IDB.set('photos',photos);renderSetup();inp.value='';};inp.click();}
 
 let audioMode='none',genOn=false,genLoop=null;
 function setupAudio(){const inp=document.getElementById('afInput'),aud=document.getElementById('bgAudio'),fn=document.getElementById('afName'),tog=document.getElementById('musicToggle');inp.onchange=e=>{const f=e.target.files[0];if(!f)return;aud.src=URL.createObjectURL(f);fn.textContent=f.name;audioMode='file';tog.textContent='מוסיקה: פועל';tog.classList.add('on');aud.play().catch(()=>{});};tog.onclick=()=>{if(audioMode==='file'){if(aud.paused){aud.play();tog.textContent='מוסיקה: פועל';tog.classList.add('on');}else{aud.pause();tog.textContent='מוסיקה: כבוי';tog.classList.remove('on');}}else{if(!genOn){genOn=true;startGen();tog.textContent='מוסיקה: פועל';tog.classList.add('on');}else{genOn=false;stopGen();tog.textContent='מוסיקה: כבוי';tog.classList.remove('on');}}};}
@@ -833,7 +840,7 @@ function initGame(){
 }
 
 window.addEventListener('DOMContentLoaded',async()=>{
-  loadData();await loadClips();applyFont(currentFont);
+  loadData();await loadClips();await loadPhotos();applyFont(currentFont);
   const blbs=document.getElementById('blbs');if(blbs)for(let i=0;i<14;i++){const d=document.createElement('span');d.className='bulb';blbs.appendChild(d);}
   renderSetup();showScreen('setup');setupAudio();
   document.querySelectorAll('.fp-btn').forEach(b=>b.onclick=()=>applyFont(b.dataset.font));
