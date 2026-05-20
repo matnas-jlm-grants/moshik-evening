@@ -676,7 +676,10 @@ function showStealOverlay(onDone){
   ov.classList.remove('hidden');
 }
 
+function gling(){const a=ac();if(!a)return;try{const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type='sine';o.frequency.setValueAtTime(1050,a.currentTime);o.frequency.exponentialRampToValueAtTime(750,a.currentTime+.08);g.gain.setValueAtTime(.15,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.08);o.start();o.stop(a.currentTime+.08);}catch(e){}}
+
 function showQuestion(){
+  gling();
   const badge=isMoshikTurn?'שאלת מושיק – '+cp:stealAfterQ?'שאלה + גנבה – '+cp:isPassTurn?'שאלה (העברה) – '+cp:'שאלה – '+cp;
   document.getElementById('qBadge').textContent=badge;
   let ptsLine=currentPts.toLocaleString()+' נקודות';
