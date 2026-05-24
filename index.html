@@ -503,7 +503,10 @@ const NEXT_BTNS=["יעלה ויבוא השחקן הבא","לבמה – הכוכ�
 let participants=[],questions={},lyrics={},scores={},photos={},currentFont='';
 let cp=null,spinning=false,picking=false,sel=null,pending=false,Q='';
 let btnIdx=0,prevScreen='setup',editSeg=0,selSong='';
-let turnCount=0,stealAvailable=false,currentPts=0,stealAfterQ=false,isPassTurn=false,isMoshikTurn=false,turnsSinceLastSong=4;
+let turnCount=0,stealAvailable=false,currentPts=0,stealAfterQ=false,isPassTurn=false,turnsSinceLastSong=4,lastStealTurn=-10;
+const SONG_RESTRICTIONS={'סאלוני אל נאס':['מוחמד','עלי','נסים','האני','נאדרה'],'איילה':['נטע','שושי']};
+const SALONI_PLAYERS=['מוחמד','האני','עלי','נסים','נאדרה'];
+const NO_SONG_PLAYERS=['אסיל'];
 let turnQueue=[];
 let songQueue=[];
 let currentSong='';
@@ -540,10 +543,15 @@ function importData(file){const r=new FileReader();r.onload=e=>{try{const d=JSON
 async function compressPhoto(file){return new Promise(res=>{const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d'),img=new Image();img.onload=()=>{const size=280;canvas.width=size;canvas.height=size;const s=Math.min(img.width,img.height),sx=(img.width-s)/2,sy=(img.height-s)/2;ctx.drawImage(img,sx,sy,s,s,0,0,size,size);res(canvas.toDataURL('image/jpeg',.72));};img.src=URL.createObjectURL(file);});}
 function uploadPhotoFor(name){const inp=document.getElementById('photoInputGlobal');inp.onchange=async(e)=>{const f=e.target.files[0];if(!f)return;const b64=await compressPhoto(f);photos[name]=b64;saveData();renderSetup();inp.value='';};inp.click();}
 
-let audioMode='none',genOn=false,genLoop=null,musicFadeId=null,musicFadeStartVol=0,musicFadeTargetVol=1,musicFadeDuration=0;
+let audioMode='none',genOn=false,genLoop=null,musicFadeId=null,musicFadeStartVol=0,musicFadeTargetVol=1,musicFadeDuration=0,_genPaused=false;
 function fadeMusic(targetVol,duration){
+  if(audioMode!=='file'){
+    if(targetVol<0.5){if(genOn){_genPaused=true;genOn=false;stopGen();}}
+    else if(_genPaused&&!genOn){_genPaused=false;genOn=true;startGen();}
+    return;
+  }
   const aud=document.getElementById('bgAudio');
-  if(!aud||!audioMode)return;
+  if(!aud)return;
   if(musicFadeId)clearInterval(musicFadeId);
   const startVol=aud.volume,steps=20,stepTime=duration*1000/steps;
   let step=0;
@@ -557,7 +565,7 @@ function setMusicBtnState(on){
   const b=document.getElementById('musicToggle');if(b)b.textContent=t;
   const c=document.getElementById('coverMusicToggle');if(c)c.textContent=t;
 }
-function toggleMusic(){const aud=document.getElementById('bgAudio');if(audioMode==='file'){genOn=false;stopGen();if(aud.paused){aud.currentTime=0;aud.play().catch(()=>{});setMusicBtnState(true);}else{aud.pause();setMusicBtnState(false);}}else{if(!genOn){genOn=true;startGen();setMusicBtnState(true);}else{genOn=false;stopGen();setMusicBtnState(false);}}}
+function toggleMusic(){_genPaused=false;const aud=document.getElementById('bgAudio');if(audioMode==='file'){genOn=false;stopGen();if(aud.paused){aud.currentTime=0;aud.play().catch(()=>{});setMusicBtnState(true);}else{aud.pause();setMusicBtnState(false);}}else{if(!genOn){genOn=true;startGen();setMusicBtnState(true);}else{genOn=false;stopGen();setMusicBtnState(false);}}}
 async function loadBgMusic(){try{const old=localStorage.getItem('m-bgm');if(old){const aud=document.getElementById('bgAudio'),fn=document.getElementById('afName');aud.src=old;audioMode='file';if(fn)fn.textContent='מוסיקה שמורה ✓';}}catch(e){}}
 function setupAudio(){const inp=document.getElementById('afInput'),aud=document.getElementById('bgAudio'),fn=document.getElementById('afName');inp.onchange=e=>{const f=e.target.files[0];if(!f)return;genOn=false;stopGen();const r=new FileReader();r.onload=ev=>{const b64=ev.target.result;aud.src=b64;try{localStorage.setItem('m-bgm',b64);}catch(e){}if(fn)fn.textContent=f.name;audioMode='file';aud.currentTime=0;aud.play().catch(()=>{});setMusicBtnState(true);};r.readAsDataURL(f);};document.getElementById('musicToggle').onclick=toggleMusic;const ctog=document.getElementById('coverMusicToggle');if(ctog)ctog.onclick=toggleMusic;}
 function ac(){if(!window._ac)try{window._ac=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}return window._ac;}
@@ -630,15 +638,26 @@ function spin(){
     pending=true;updateTopRow();updateWheelCursor();
     setTimeout(()=>{
       currentPts=seg.val||500;
-      if(seg.key==='song_id'){if(turnsSinceLastSong>=4){turnsSinceLastSong=0;const pin=pinnedSongs[cp];const songs=questions.song||[];const song=pin&&songs.includes(pin)?pin:getNextSong();showSongId(song);return;}const ptsSeg=WHEEL.filter(s=>s.key==='pts');currentPts=ptsSeg[Math.floor(Math.random()*ptsSeg.length)].val||600;}
-      turnsSinceLastSong++;turnCount++;if(turnCount%5===0)stealAvailable=true;
+      if(seg.key==='song_id'){
+        const noSong=NO_SONG_PLAYERS.some(n=>cp&&cp.includes(n));
+        if(!noSong&&turnsSinceLastSong>=4){
+          turnsSinceLastSong=0;turnCount++;
+          const songs=questions.song||[];
+          const isSaloni=SALONI_PLAYERS.some(n=>cp&&cp.includes(n));
+          const pin=isSaloni?'סאלוני אל נאס':(pinnedSongs[cp]||null);
+          let song=(pin&&songs.includes(pin))?pin:getNextSong();
+          if(!isSaloni&&song&&song.includes('סאלוני אל נאס')){songQueue.push(song);song=getNextSong();}
+          showSongId(song);return;
+        }
+        const ptsSeg=WHEEL.filter(s=>s.key==='pts');currentPts=ptsSeg[Math.floor(Math.random()*ptsSeg.length)].val||600;
+      }
+      turnsSinceLastSong++;turnCount++;
       if(seg.key==='pass')isPassTurn=true;
-      if(seg.key==='steal'){stealAfterQ=true;stealAvailable=false;}
-      if(seg.key==='moshik')isMoshikTurn=true;
-      const pool=isMoshikTurn?(questions.moshik||DQ.moshik):questions.truth;
+      if(seg.key==='steal'){if(turnCount-lastStealTurn>3){stealAfterQ=true;}else{const ptsSeg=WHEEL.filter(s=>s.key==='pts');currentPts=ptsSeg[Math.floor(Math.random()*ptsSeg.length)].val||600;}}
+      const isMoshik=seg.key==='moshik';
+      const pool=isMoshik?(questions.moshik||DQ.moshik):questions.truth;
       Q=pool[Math.floor(Math.random()*pool.length)]||'';
-      if(stealAvailable){showStealBanner(()=>showQuestion());}
-      else{showQuestion();}
+      showQuestion();
     },1500);
   }
   aid=requestAnimationFrame(anim);
@@ -651,12 +670,14 @@ function nextPlayer(){
 }
 
 function showStealBanner(cb){
+  fadeMusic(0,0.5);
   const b=document.getElementById('stealBanner');b.classList.remove('hidden');
   document.getElementById('bannerStealBtn').onclick=()=>{b.classList.add('hidden');stealAvailable=false;showStealOverlay(cb);};
   document.getElementById('bannerPlayBtn').onclick=()=>{b.classList.add('hidden');stealAvailable=false;cb();};
 }
 
 function showStealOverlay(onDone){
+  fadeMusic(0,0.5);
   const ov=document.getElementById('stealOverlay');
   const list=document.getElementById('stealList');
   const rr=document.getElementById('stealRangeRow');
@@ -727,10 +748,11 @@ function showSongId(specificSong){
   document.getElementById('songIdOverlay').classList.remove('hidden');
 }
 
-function showWinnerSelect(pts,afterCb){
+function showWinnerSelect(pts,afterCb,playerList){
   const ov=document.getElementById('winnerOverlay');
   const list=document.getElementById('winnerList');
-  list.innerHTML=participants.map(p=>`<div class="winner-item" data-name="${p}">${p}</div>`).join('');
+  const players=playerList&&playerList.length?playerList:participants;
+  list.innerHTML=players.map(p=>`<div class="winner-item" data-name="${p}">${p}</div>`).join('');
   list.querySelectorAll('.winner-item').forEach(item=>{
     item.onclick=()=>{
       const w=item.dataset.name;scores[w]=(scores[w]||0)+pts;saveData();
@@ -746,16 +768,17 @@ function showWinnerSelect(pts,afterCb){
 
 function createFrameBulbs(el){if(!el||el.childElementCount>0)return;const w=el.offsetWidth||500,h=el.offsetHeight||200,sp=28;const pl=(x,y,d)=>{const b=document.createElement('div');b.className='qb';b.style.cssText=`left:${x}px;top:${y}px;animation-delay:${d}s`;el.appendChild(b);};for(let x=0;x<w;x+=sp)pl(x,-5,(x/sp*.15)%1.3);for(let x=0;x<w;x+=sp)pl(x,h-5,((x/sp*.15)+.4)%1.3);for(let y=sp;y<h-sp;y+=sp)pl(-5,y,((y/sp*.15)+.2)%1.3);for(let y=sp;y<h-sp;y+=sp)pl(w-5,y,((y/sp*.15)+.7)%1.3);}
 function fanfare(){const a=ac();if(!a)return;try{const notes=[[523,0],[659,.08],[784,.16],[1047,.24],[784,.38],[1047,.5],[1047,.62]];notes.forEach(([f,t])=>{const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type='square';o.frequency.value=f;const st=a.currentTime+t;g.gain.setValueAtTime(.14,st);g.gain.exponentialRampToValueAtTime(.001,st+.18);o.start(st);o.stop(st+.2);});}catch(e){}}
-function showPointsPopup(txt){fanfare();const el=document.createElement('div');el.className='points-popup';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),1900);fadeMusic(1,0.8);}
+function showPointsPopup(txt){fanfare();const el=document.createElement('div');el.className='points-popup';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),1900);}
 function parseSong(s){const d=s.indexOf('–');return d>-1?{name:s.slice(0,d).trim(),artist:s.slice(d+1).trim()}:{name:s.trim(),artist:''};}
 
 function showPhotoSplash(name,src){
   const ex=document.getElementById('photoSplash');if(ex)ex.remove();
+  fadeMusic(0,0.6);
   const div=document.createElement('div');div.className='photo-splash';div.id='photoSplash';div.style.cursor='pointer';
   if(src){const sz=Math.round(Math.min(window.innerHeight*.65,window.innerWidth*.80,520));div.innerHTML=`<img class="splash-img" src="${src}" style="width:${sz}px;height:${sz}px" alt="${name}"><div class="splash-name">${name}!</div><div style="font-size:13px;color:rgba(212,160,23,.5);margin-top:8px;letter-spacing:1px;">לחץ להמשך</div>`;}
   else{div.innerHTML=`<div class="splash-name" style="font-size:clamp(40px,10vw,90px)">${name}!</div><div style="font-size:13px;color:rgba(212,160,23,.5);margin-top:8px;letter-spacing:1px;">לחץ להמשך</div>`;}
   document.body.appendChild(div);
-  div.onclick=()=>{div.style.transition='opacity .3s';div.style.opacity='0';setTimeout(()=>div.remove(),300);};
+  div.onclick=()=>{fadeMusic(1,0.7);div.style.transition='opacity .3s';div.style.opacity='0';setTimeout(()=>div.remove(),300);};
 }
 
 function getNextSong(){
@@ -775,7 +798,6 @@ function getNextInQueue(){
 function pickP(){
   if(picking||!participants.length)return;
   picking=true;sel=null;pending=false;updatePhotoZone(null,true);
-  fadeMusic(0,1);
   const nextP=getNextInQueue();
   let count=0,delay=60,max=12+Math.floor(Math.random()*8);
   function cycle(){cp=participants[Math.floor(Math.random()*participants.length)];updateTopRow();count++;
@@ -814,6 +836,7 @@ function updateTopRow(){
 }
 
 function showLyrics(){
+  fadeMusic(0,0.5);
   const p=parseSong(Q);document.getElementById('lyricsTitle').textContent=p.name;document.getElementById('lyricsArtist').textContent=p.artist?'– '+p.artist:'';
   const lt=lyrics[Q]||'';document.getElementById('lyricsBody').innerHTML=lt?`<div class="lyrics-text">${lt}</div>`:`<div class="lyrics-empty">מילות שיר עדיין לא הוזנו</div>`;
   const lb=document.getElementById('lyrBulbs');if(lb&&!lb.hasChildNodes())for(let i=0;i<14;i++){const d=document.createElement('span');d.className='bulb';lb.appendChild(d);}
@@ -869,6 +892,7 @@ function renderClips(){
 function renderLE(){const songs=questions.song||[];const s2=document.getElementById('lyrSel');if(!s2)return;s2.innerHTML=songs.map(s=>`<button class="lsb${s===selSong?' active':''}" data-song="${s}">${s.split('–')[0].trim()}</button>`).join('');s2.querySelectorAll('.lsb').forEach(b=>{b.onclick=()=>{selSong=b.dataset.song;document.getElementById('lyrInput').value=lyrics[selSong]||'';renderLE();};});const inp=document.getElementById('lyrInput');if(inp){inp.oninput=()=>{if(selSong){lyrics[selSong]=inp.value;saveData();}};if(!selSong&&songs.length>0){selSong=songs[0];inp.value=lyrics[selSong]||'';renderLE();}}}
 
 function showSingSongOverlay(song){
+  fadeMusic(0,0.5);
   const ov=document.getElementById('singSongOverlay');ov.classList.remove('hidden');
   document.getElementById('singSongYes').onclick=()=>{ov.classList.add('hidden');Q=song;showLyrics();};
   document.getElementById('singSongNo').onclick=()=>{ov.classList.add('hidden');nextPlayer();};
@@ -882,7 +906,7 @@ function closeAllOverlays(){
 function initGame(){
   calcCS();const wc=document.getElementById('wc');if(wc){wc.width=cs;wc.height=cs;}
   draw(rot);cp=null;spinning=false;picking=false;sel=null;pending=false;
-  turnCount=0;stealAvailable=false;currentPts=0;turnsSinceLastSong=4;
+  turnCount=0;stealAvailable=false;currentPts=0;turnsSinceLastSong=4;lastStealTurn=-10;
   document.getElementById('wHint').textContent='';
   updateTopRow();updateWheelCursor();
 }
@@ -917,7 +941,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   document.getElementById('scoreBtn').onclick=()=>{renderScoreboard();showScreen('scoreboard');};
 
   function afterQuestion(){
-    if(stealAfterQ){stealAfterQ=false;setTimeout(()=>showStealOverlay(()=>nextPlayer()),300);}
+    if(stealAfterQ){stealAfterQ=false;lastStealTurn=turnCount;setTimeout(()=>showStealOverlay(()=>nextPlayer()),300);}
     else nextPlayer();
   }
 
@@ -929,6 +953,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
 
   document.getElementById('doubleBtn').onclick=()=>{
     document.getElementById('qOverlay').classList.add('hidden');
+    fadeMusic(0,0.5);
     const dares=questions.dare||[];const task=dares[Math.floor(Math.random()*dares.length)]||'אין משימות — הוסף בעריכה';
     const dbl=currentPts*2;
     document.getElementById('taskPts').textContent=dbl.toLocaleString()+' נקודות (×2)';
@@ -946,8 +971,18 @@ window.addEventListener('DOMContentLoaded',async()=>{
 
   function songCorrect(pts){
     document.getElementById('clipAudio').pause();
-    document.getElementById('songIdOverlay').classList.add('hidden');
     const song=currentSong;
+    // כללים 3-4: שירים עם הגבלת שחקנים
+    const restrictKey=Object.keys(SONG_RESTRICTIONS).find(k=>song&&song.includes(k));
+    if(restrictKey){
+      const validWinners=participants.filter(p=>SONG_RESTRICTIONS[restrictKey].some(r=>p.includes(r)));
+      if(validWinners.length){
+        document.getElementById('songIdOverlay').classList.add('hidden');
+        showWinnerSelect(pts,song?()=>showSingSongOverlay(song):null,validWinners);
+        return;
+      }
+    }
+    document.getElementById('songIdOverlay').classList.add('hidden');
     if(cp){scores[cp]=(scores[cp]||0)+pts;saveData();showPointsPopup('+'+pts.toLocaleString());}
     song?showSingSongOverlay(song):nextPlayer();
   }
@@ -955,7 +990,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   document.getElementById('songIdSoloBtn').onclick=()=>songCorrect(currentPts*2);
   document.getElementById('songIdNobodyBtn').onclick=()=>{document.getElementById('clipAudio').pause();document.getElementById('songIdOverlay').classList.add('hidden');nextPlayer();};
 
-  document.getElementById('lyricsDone').onclick=()=>{pending=false;sel=null;cp=null;showScreen('game');updatePhotoZone(null,false);updateTopRow();updateWheelCursor();document.getElementById('wHint').textContent='';};
+  document.getElementById('lyricsDone').onclick=()=>{fadeMusic(1,0.8);pending=false;sel=null;cp=null;showScreen('game');updatePhotoZone(null,false);updateTopRow();updateWheelCursor();document.getElementById('wHint').textContent='';};
   document.getElementById('sbBack').onclick=()=>{showScreen('game');};
   document.getElementById('sbReset').onclick=()=>{if(confirm('לאפס את כל הניקוד?')){scores={};saveData();renderScoreboard();}};
   document.getElementById('editBack').onclick=()=>{renderSetup();showScreen(prevScreen==='game'?'game':'setup');};
