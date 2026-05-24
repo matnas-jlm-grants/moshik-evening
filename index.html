@@ -649,7 +649,11 @@ function spin(){
           if(!isSaloni&&song&&song.includes('סאלוני אל נאס')){songQueue.push(song);song=getNextSong();}
           showSongId(song);return;
         }
-        const ptsSeg=WHEEL.filter(s=>s.key==='pts');currentPts=ptsSeg[Math.floor(Math.random()*ptsSeg.length)].val||600;
+        // song_id → auto-pts (too soon, or noSong player): no question, just points
+        turnCount++;turnsSinceLastSong++;
+        if(cp){scores[cp]=(scores[cp]||0)+currentPts;saveData();showPointsPopup('+'+currentPts.toLocaleString());}
+        setTimeout(()=>nextPlayer(),1500);
+        return;
       }
       turnsSinceLastSong++;turnCount++;
       if(seg.key==='pass')isPassTurn=true;
@@ -837,6 +841,8 @@ function updateTopRow(){
 
 function showLyrics(){
   fadeMusic(0,0.5);
+  if(genOn){_genPaused=true;genOn=false;stopGen();}
+  const _ba=document.getElementById('bgAudio');if(_ba)_ba.volume=0;
   const p=parseSong(Q);document.getElementById('lyricsTitle').textContent=p.name;document.getElementById('lyricsArtist').textContent=p.artist?'– '+p.artist:'';
   const lt=lyrics[Q]||'';document.getElementById('lyricsBody').innerHTML=lt?`<div class="lyrics-text">${lt}</div>`:`<div class="lyrics-empty">מילות שיר עדיין לא הוזנו</div>`;
   const lb=document.getElementById('lyrBulbs');if(lb&&!lb.hasChildNodes())for(let i=0;i<14;i++){const d=document.createElement('span');d.className='bulb';lb.appendChild(d);}
