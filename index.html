@@ -887,6 +887,11 @@ function initGame(){
 
 window.addEventListener('DOMContentLoaded',async()=>{
   try{
+    let storageOk=false;
+    try{localStorage.setItem('_t','1');storageOk=localStorage.getItem('_t')==='1';localStorage.removeItem('_t');}catch(e){}
+    if(!storageOk){
+      document.body.insertAdjacentHTML('afterbegin','<div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#b71c1c;color:#fff;text-align:center;padding:10px 16px;font-size:14px;font-family:inherit;direction:rtl;">⚠️ הדפדפן חוסם שמירת נתונים — פתחי את האתר בחלון רגיל (לא פרטי) כדי ששינויים יישמרו</div>');
+    }
     loadData();
     try{await loadClips();}catch(e){console.log('Clips load failed, continuing');}
     try{await loadPhotos();}catch(e){console.log('Photos load failed, continuing');}
@@ -903,7 +908,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   document.getElementById('exportBtn').onclick=exportData;
   document.getElementById('importInput').onchange=e=>{const f=e.target.files[0];if(f){importData(f);e.target.value='';}};
   document.getElementById('resetGameBtn').onclick=()=>{if(!confirm('לאפס ניקוד וסדר תורות?'))return;scores={};turnQueue=[];songQueue=[];turnCount=0;stealAvailable=false;turnsSinceLastSong=4;saveData();renderSetup();};
-  document.getElementById('startBtn').onclick=()=>{if(participants.length<2)return;exportData(true);showScreen('game');initGame();};
+  document.getElementById('startBtn').onclick=()=>{if(participants.length<2)return;showScreen('game');initGame();};
   document.getElementById('wheelRing').onclick=spin;
   document.getElementById('toSetup').onclick=()=>{if(aid)cancelAnimationFrame(aid);spinning=false;closeAllOverlays();showScreen('setup');renderSetup();};
   document.getElementById('editQGame').onclick=()=>{prevScreen='game';setES(0);showScreen('edit');};
@@ -954,7 +959,6 @@ window.addEventListener('DOMContentLoaded',async()=>{
   document.getElementById('editBack').onclick=()=>{renderSetup();showScreen(prevScreen==='game'?'game':'setup');};
   document.getElementById('addQBtn').onclick=()=>{const val=(document.getElementById('nqi').value||'').trim();if(!val)return;questions[CATS[editSeg].key].push(val);saveData();setES(editSeg);renderSetup();};
   window.addEventListener('resize',()=>{if(!document.getElementById('game').classList.contains('hidden')){calcCS();const wc=document.getElementById('wc');if(wc){wc.width=cs;wc.height=cs;draw(rot);}}});
-  window.addEventListener('beforeunload',e=>{if(Date.now()-_lastExport>15*60*1000){e.preventDefault();e.returnValue='הנתונים לא גובו לקובץ לאחרונה. לחץ בטל ולאחר מכן שמור גיבוי.';}});
 });
 </script>
 </body>
