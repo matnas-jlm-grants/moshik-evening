@@ -518,16 +518,18 @@ const IDB={
 };
 async function loadClips(){
   try{
-    const c=await IDB.get('clips');
+    const c=await Promise.race([IDB.get('clips'),new Promise(r=>setTimeout(()=>r(null),1500))]);
     if(c){songClips=c;}
-    else{const old=localStorage.getItem('m-cl');if(old){songClips=JSON.parse(old);await IDB.set('clips',songClips);localStorage.removeItem('m-cl');}}
-  }catch(e){}
+    else{const old=localStorage.getItem('m-cl');if(old){songClips=JSON.parse(old);}}
+  }catch(e){console.log('Clips error:',e);}
 }
 async function loadPhotos(){
   try{
-    const p=await IDB.get('photos');
+    const p=await Promise.race([IDB.get('photos'),new Promise(r=>setTimeout(()=>r(null),1500))]);
     if(p){photos=p;}
-    else{const old=localStorage.getItem('m-ph');if(old){photos=JSON.parse(old);await IDB.set('photos',photos);localStorage.removeItem('m-ph');}}
+    else{const old=localStorage.getItem('m-ph');if(old){photos=JSON.parse(old);}}
+  }catch(e){console.log('Photos error:',e);}
+}
   }catch(e){}
 }
 
@@ -552,7 +554,7 @@ function fadeMusic(targetVol,duration){
   },stepTime);
 }}
 function toggleMusic(){const aud=document.getElementById('bgAudio');if(audioMode==='file'){genOn=false;stopGen();if(aud.paused){aud.currentTime=0;aud.play().catch(()=>{});setMusicBtnState(true);}else{aud.pause();setMusicBtnState(false);}}else{if(!genOn){genOn=true;startGen();setMusicBtnState(true);}else{genOn=false;stopGen();setMusicBtnState(false);}}}
-async function loadBgMusic(){try{const bgm=await IDB.get('bgMusic');if(bgm){const aud=document.getElementById('bgAudio'),fn=document.getElementById('afName');aud.src=bgm;audioMode='file';if(fn)fn.textContent='מוסיקה שמורה ✓';}}catch(e){}}
+async function loadBgMusic(){try{const bgm=await Promise.race([IDB.get('bgMusic'),new Promise(r=>setTimeout(()=>r(null),1500))]);if(bgm){const aud=document.getElementById('bgAudio'),fn=document.getElementById('afName');aud.src=bgm;audioMode='file';if(fn)fn.textContent='מוסיקה שמורה ✓';}}catch(e){console.log('Music error:',e);}}
 function setupAudio(){const inp=document.getElementById('afInput'),aud=document.getElementById('bgAudio'),fn=document.getElementById('afName');inp.onchange=e=>{const f=e.target.files[0];if(!f)return;genOn=false;stopGen();const r=new FileReader();r.onload=ev=>{const b64=ev.target.result;aud.src=b64;IDB.set('bgMusic',b64);if(fn)fn.textContent=f.name;audioMode='file';aud.currentTime=0;aud.play().catch(()=>{});setMusicBtnState(true);};r.readAsDataURL(f);};document.getElementById('musicToggle').onclick=toggleMusic;const ctog=document.getElementById('coverMusicToggle');if(ctog)ctog.onclick=toggleMusic;}
 function ac(){if(!window._ac)try{window._ac=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}return window._ac;}
 function startGen(){const a=ac();if(!a)return;if(a.state==='suspended')a.resume();stopGen();const bpm=126,b=60/bpm,mel=[523,659,784,659,523,440,494,523,659,784,880,784,659,523,587,523],bas=[131,131,165,131,131,110,123,131,131,165,220,165,165,131,147,131];let t=a.currentTime+0.05;function s(){if(!genOn)return;for(let i=0;i<mel.length;i++){const st=t+i*(b*0.5);const om=a.createOscillator(),gm=a.createGain();om.connect(gm);gm.connect(a.destination);om.type='sine';om.frequency.value=mel[i];gm.gain.setValueAtTime(0,st);gm.gain.linearRampToValueAtTime(0.07,st+0.02);gm.gain.exponentialRampToValueAtTime(0.001,st+b*0.45);om.start(st);om.stop(st+b*0.5);if(i%2===0){const ob=a.createOscillator(),gb=a.createGain();ob.connect(gb);gb.connect(a.destination);ob.type='triangle';ob.frequency.value=bas[i];gb.gain.setValueAtTime(0,st);gb.gain.linearRampToValueAtTime(0.05,st+0.03);gb.gain.exponentialRampToValueAtTime(0.001,st+b*0.9);ob.start(st);ob.stop(st+b);}}t+=mel.length*b*0.5;genLoop=setTimeout(s,(mel.length*b*0.5-0.3)*1000);}s();}
@@ -882,9 +884,14 @@ function initGame(){
 }
 
 window.addEventListener('DOMContentLoaded',async()=>{
-  loadData();await loadClips();await loadPhotos();await loadBgMusic();applyFont(currentFont);
-  const blbs=document.getElementById('blbs');if(blbs)for(let i=0;i<14;i++){const d=document.createElement('span');d.className='bulb';blbs.appendChild(d);}
-  renderSetup();showScreen('cover');setupAudio();
+  try{
+    loadData();
+    try{await loadClips();}catch(e){console.log('Clips load failed, continuing');}
+    try{await loadPhotos();}catch(e){console.log('Photos load failed, continuing');}
+    try{await loadBgMusic();}catch(e){console.log('Music load failed, continuing');}
+    applyFont(currentFont);
+    const blbs=document.getElementById('blbs');if(blbs)for(let i=0;i<14;i++){const d=document.createElement('span');d.className='bulb';blbs.appendChild(d);}
+    renderSetup();showScreen('cover');setupAudio();
   document.getElementById('coverStartBtn').onclick=()=>showScreen('setup');
   document.querySelectorAll('.fp-btn').forEach(b=>b.onclick=()=>applyFont(b.dataset.font));
   const ni=document.getElementById('ni');ni.onkeydown=e=>{if(e.key==='Enter')document.getElementById('addPBtn').click();};
