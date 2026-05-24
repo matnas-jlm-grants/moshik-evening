@@ -539,8 +539,18 @@ function importData(file){const r=new FileReader();r.onload=e=>{try{const d=JSON
 async function compressPhoto(file){return new Promise(res=>{const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d'),img=new Image();img.onload=()=>{const size=280;canvas.width=size;canvas.height=size;const s=Math.min(img.width,img.height),sx=(img.width-s)/2,sy=(img.height-s)/2;ctx.drawImage(img,sx,sy,s,s,0,0,size,size);res(canvas.toDataURL('image/jpeg',.72));};img.src=URL.createObjectURL(file);});}
 function uploadPhotoFor(name){const inp=document.getElementById('photoInputGlobal');inp.onchange=async(e)=>{const f=e.target.files[0];if(!f)return;const b64=await compressPhoto(f);photos[name]=b64;saveData();IDB.set('photos',photos);renderSetup();inp.value='';};inp.click();}
 
-let audioMode='none',genOn=false,genLoop=null;
-function setMusicBtnState(on){['musicToggle','coverMusicToggle'].forEach(id=>{const b=document.getElementById(id);if(!b)return;b.textContent='מוסיקה: '+(on?'פועל':'כבוי');b.classList.toggle('on',on);});}
+let audioMode='none',genOn=false,genLoop=null,musicFadeId=null,musicFadeStartVol=0,musicFadeTargetVol=1,musicFadeDuration=0;
+function fadeMusic(targetVol,duration){
+  const aud=document.getElementById('bgAudio');
+  if(!aud||!audioMode)return;
+  if(musicFadeId)clearInterval(musicFadeId);
+  const startVol=aud.volume,steps=20,stepTime=duration*1000/steps;
+  let step=0;
+  musicFadeId=setInterval(()=>{
+    step++;const t=step/steps;aud.volume=startVol+(targetVol-startVol)*t;
+    if(step>=steps){clearInterval(musicFadeId);musicFadeId=null;aud.volume=targetVol;}
+  },stepTime);
+}}
 function toggleMusic(){const aud=document.getElementById('bgAudio');if(audioMode==='file'){genOn=false;stopGen();if(aud.paused){aud.currentTime=0;aud.play().catch(()=>{});setMusicBtnState(true);}else{aud.pause();setMusicBtnState(false);}}else{if(!genOn){genOn=true;startGen();setMusicBtnState(true);}else{genOn=false;stopGen();setMusicBtnState(false);}}}
 async function loadBgMusic(){try{const bgm=await IDB.get('bgMusic');if(bgm){const aud=document.getElementById('bgAudio'),fn=document.getElementById('afName');aud.src=bgm;audioMode='file';if(fn)fn.textContent='מוסיקה שמורה ✓';}}catch(e){}}
 function setupAudio(){const inp=document.getElementById('afInput'),aud=document.getElementById('bgAudio'),fn=document.getElementById('afName');inp.onchange=e=>{const f=e.target.files[0];if(!f)return;genOn=false;stopGen();const r=new FileReader();r.onload=ev=>{const b64=ev.target.result;aud.src=b64;IDB.set('bgMusic',b64);if(fn)fn.textContent=f.name;audioMode='file';aud.currentTime=0;aud.play().catch(()=>{});setMusicBtnState(true);};r.readAsDataURL(f);};document.getElementById('musicToggle').onclick=toggleMusic;const ctog=document.getElementById('coverMusicToggle');if(ctog)ctog.onclick=toggleMusic;}
@@ -630,6 +640,7 @@ function spin(){
 
 function nextPlayer(){
   pending=false;sel=null;cp=null;stealAfterQ=false;isPassTurn=false;isMoshikTurn=false;
+  fadeMusic(1,1.5);
   updatePhotoZone(null,false);updateTopRow();updateWheelCursor();
 }
 
@@ -729,8 +740,8 @@ function showWinnerSelect(pts,afterCb){
 
 function createFrameBulbs(el){if(!el||el.childElementCount>0)return;const w=el.offsetWidth||500,h=el.offsetHeight||200,sp=28;const pl=(x,y,d)=>{const b=document.createElement('div');b.className='qb';b.style.cssText=`left:${x}px;top:${y}px;animation-delay:${d}s`;el.appendChild(b);};for(let x=0;x<w;x+=sp)pl(x,-5,(x/sp*.15)%1.3);for(let x=0;x<w;x+=sp)pl(x,h-5,((x/sp*.15)+.4)%1.3);for(let y=sp;y<h-sp;y+=sp)pl(-5,y,((y/sp*.15)+.2)%1.3);for(let y=sp;y<h-sp;y+=sp)pl(w-5,y,((y/sp*.15)+.7)%1.3);}
 function fanfare(){const a=ac();if(!a)return;try{const notes=[[523,0],[659,.08],[784,.16],[1047,.24],[784,.38],[1047,.5],[1047,.62]];notes.forEach(([f,t])=>{const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type='square';o.frequency.value=f;const st=a.currentTime+t;g.gain.setValueAtTime(.14,st);g.gain.exponentialRampToValueAtTime(.001,st+.18);o.start(st);o.stop(st+.2);});}catch(e){}}
-function showPointsPopup(txt){fanfare();const el=document.createElement('div');el.className='points-popup';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),1900);}
-function parseSong(s){const d=s.indexOf('–');return d>-1?{name:s.slice(0,d).trim(),artist:s.slice(d+1).trim()}:{name:s.trim(),artist:''};}
+function showPointsPopup(txt){fanfare();const el=document.createElement('div');el.className='points-popup';el.textContent=txt;document.body.appendChild(el);setTimeout(()=>el.remove(),1900);fadeMusic(1,0.8);}
+function parseSong(s){const d=s.indexOf('–');return d>-1?{name:s.slice(0,d).trim(),artist:s.slice(d+1).trim()}:{name:s.trim(),artist:''};
 
 function showPhotoSplash(name,src){
   const ex=document.getElementById('photoSplash');if(ex)ex.remove();
@@ -758,6 +769,7 @@ function getNextInQueue(){
 function pickP(){
   if(picking||!participants.length)return;
   picking=true;sel=null;pending=false;updatePhotoZone(null,true);
+  fadeMusic(0,1);
   const nextP=getNextInQueue();
   let count=0,delay=60,max=12+Math.floor(Math.random()*8);
   function cycle(){cp=participants[Math.floor(Math.random()*participants.length)];updateTopRow();count++;
