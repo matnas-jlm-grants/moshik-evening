@@ -459,7 +459,7 @@ audio{display:none;}
   <div class="lyr-wrap" id="clipsWrap">
     <div class="lyr-lbl">קליפי שירים — MP3 קצר לכל שיר</div>
     <div id="clipsList"></div>
-    <div style="font-size:11px;color:rgba(212,160,23,.35);margin-top:6px;">הקליפים נשמרים לסשן הנוכחי בלבד</div>
+    <div style="font-size:11px;color:rgba(212,160,23,.35);margin-top:6px;">הקליפים נשמרים בדפדפן לשימוש עתידי</div>
   </div>
 </div>
 </div>
@@ -519,7 +519,9 @@ const IDB={
 async function loadClips(){
   try{
     const old=localStorage.getItem('m-cl');
-    if(old){songClips=JSON.parse(old);}
+    if(old){songClips=JSON.parse(old);localStorage.removeItem('m-cl');await IDB.set('clips',songClips);return;}
+    const c=await IDB.get('clips');
+    if(c)songClips=c;
   }catch(e){}
 }
 async function loadPhotos(){
