@@ -503,7 +503,7 @@ const NEXT_BTNS=["יעלה ויבוא השחקן הבא","לבמה – הכוכ�
 let participants=[],questions={},lyrics={},scores={},photos={},currentFont='';
 let cp=null,spinning=false,picking=false,sel=null,pending=false,Q='';
 let btnIdx=0,prevScreen='setup',editSeg=0,selSong='';
-let turnCount=0,stealAvailable=false,currentPts=0,stealAfterQ=false,isPassTurn=false,turnsSinceLastSong=4,lastStealTurn=-10;
+let turnCount=0,stealAvailable=false,currentPts=0,stealAfterQ=false,isPassTurn=false,lastStealTurn=-10;
 const SONG_RESTRICTIONS={'סאלוני אל נאס':['מוחמד','עלי','נסים','האני','נאדרה'],'איילה':['נטע','שושי']};
 const SALONI_PLAYERS=['מוחמד','האני','עלי','נסים','נאדרה'];
 const NO_SONG_PLAYERS=['אסיל'];
@@ -640,8 +640,8 @@ function spin(){
       currentPts=seg.val||500;
       if(seg.key==='song_id'){
         const noSong=NO_SONG_PLAYERS.some(n=>cp&&cp.includes(n));
-        if(!noSong&&turnsSinceLastSong>=4){
-          turnsSinceLastSong=0;turnCount++;
+        if(!noSong){
+          turnCount++;
           const songs=questions.song||[];
           const isSaloni=SALONI_PLAYERS.some(n=>cp&&cp.includes(n));
           const pin=isSaloni?'סאלוני אל נאס':(pinnedSongs[cp]||null);
@@ -649,13 +649,13 @@ function spin(){
           if(!isSaloni&&song&&song.includes('סאלוני אל נאס')){songQueue.push(song);song=getNextSong();}
           showSongId(song);return;
         }
-        // song_id → auto-pts (too soon, or noSong player): no question, just points
-        turnCount++;turnsSinceLastSong++;
+        // noSong player (אסיל): auto-pts, skip song entirely
+        turnCount++;
         if(cp){scores[cp]=(scores[cp]||0)+currentPts;saveData();showPointsPopup('+'+currentPts.toLocaleString());}
         setTimeout(()=>nextPlayer(),1500);
         return;
       }
-      turnsSinceLastSong++;turnCount++;
+      turnCount++;
       if(seg.key==='pass')isPassTurn=true;
       if(seg.key==='steal'){if(turnCount-lastStealTurn>3){stealAfterQ=true;}else{const ptsSeg=WHEEL.filter(s=>s.key==='pts');currentPts=ptsSeg[Math.floor(Math.random()*ptsSeg.length)].val||600;}}
       const isMoshik=seg.key==='moshik';
@@ -912,7 +912,7 @@ function closeAllOverlays(){
 function initGame(){
   calcCS();const wc=document.getElementById('wc');if(wc){wc.width=cs;wc.height=cs;}
   draw(rot);cp=null;spinning=false;picking=false;sel=null;pending=false;
-  turnCount=0;stealAvailable=false;currentPts=0;turnsSinceLastSong=4;lastStealTurn=-10;
+  turnCount=0;stealAvailable=false;currentPts=0;lastStealTurn=-10;
   document.getElementById('wHint').textContent='';
   updateTopRow();updateWheelCursor();
 }
@@ -939,7 +939,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   document.getElementById('editQBtn').onclick=()=>{prevScreen='setup';setES(0);showScreen('edit');};
   document.getElementById('exportBtn').onclick=exportData;
   document.getElementById('importInput').onchange=e=>{const f=e.target.files[0];if(f){importData(f);e.target.value='';}};
-  document.getElementById('resetGameBtn').onclick=()=>{if(!confirm('לאפס ניקוד וסדר תורות?'))return;scores={};turnQueue=[];songQueue=[];turnCount=0;stealAvailable=false;turnsSinceLastSong=4;saveData();renderSetup();};
+  document.getElementById('resetGameBtn').onclick=()=>{if(!confirm('לאפס ניקוד וסדר תורות?'))return;scores={};turnQueue=[];songQueue=[];turnCount=0;stealAvailable=false;saveData();renderSetup();};
   document.getElementById('startBtn').onclick=()=>{if(participants.length<2)return;showScreen('game');initGame();};
   document.getElementById('wheelRing').onclick=spin;
   document.getElementById('toSetup').onclick=()=>{if(aid)cancelAnimationFrame(aid);spinning=false;closeAllOverlays();showScreen('setup');renderSetup();};
