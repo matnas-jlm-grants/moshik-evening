@@ -630,16 +630,12 @@ function spin(){
     else{const st=Math.min((now-suspStart)/1800,1);const wobble=Math.sin(st*Math.PI*5)*(1-st)*0.06;rot=startRot+totalRot*.96+easeOut(st)*totalRot*.04+wobble;draw(rot);if(st<1)aid=requestAnimationFrame(anim);else landing(startRot+totalRot);}
   }
   function landing(finalRot){
-    spinning=false;
+    rot=finalRot;draw(rot);spinning=false;
     document.getElementById('wheelRing').classList.remove('spinning-ring');
-    const rawAngle=((((-finalRot)%PI2)+PI2)%PI2);
-    let fs=Math.floor(rawAngle/SW)%NW;
+    let fs=Math.floor(((((-rot)%PI2)+PI2)%PI2)/SW)%NW;
     if(WHEEL[fs].key==='song_id'&&turnsSinceLastSong<4){
       for(let d=1;d<NW;d++){const alt=(fs+d)%NW;if(WHEEL[alt].key!=='song_id'){fs=alt;break;}}
     }
-    const snapAngle=fs*SW+SW/2;
-    rot=finalRot-snapAngle+rawAngle;
-    draw(rot);
     sel=fs;const seg=WHEEL[fs];
     pending=true;updateTopRow();updateWheelCursor();
     setTimeout(()=>{
