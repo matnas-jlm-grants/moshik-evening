@@ -780,11 +780,13 @@ function parseSong(s){const d=s.indexOf('–');return d>-1?{name:s.slice(0,d).tr
 function showPhotoSplash(name,src){
   const ex=document.getElementById('photoSplash');if(ex)ex.remove();
   fadeMusic(0,0.6);
+  if(genOn){_genPaused=true;genOn=false;stopGen();}
+  const _ba=document.getElementById('bgAudio');if(_ba)_ba.volume=0;
   const div=document.createElement('div');div.className='photo-splash';div.id='photoSplash';div.style.cursor='pointer';
   if(src){const sz=Math.round(Math.min(window.innerHeight*.65,window.innerWidth*.80,520));div.innerHTML=`<img class="splash-img" src="${src}" style="width:${sz}px;height:${sz}px" alt="${name}"><div class="splash-name">${name}!</div><div style="font-size:13px;color:rgba(212,160,23,.5);margin-top:8px;letter-spacing:1px;">לחץ להמשך</div>`;}
   else{div.innerHTML=`<div class="splash-name" style="font-size:clamp(40px,10vw,90px)">${name}!</div><div style="font-size:13px;color:rgba(212,160,23,.5);margin-top:8px;letter-spacing:1px;">לחץ להמשך</div>`;}
   document.body.appendChild(div);
-  div.onclick=()=>{fadeMusic(1,0.7);div.style.transition='opacity .3s';div.style.opacity='0';setTimeout(()=>div.remove(),300);};
+  div.onclick=()=>{div.style.transition='opacity .3s';div.style.opacity='0';setTimeout(()=>div.remove(),300);};
 }
 
 function getNextSong(){
