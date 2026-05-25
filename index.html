@@ -634,10 +634,14 @@ function spin(){
     document.getElementById('wheelRing').classList.remove('spinning-ring');
     const rawAngle=((((-finalRot)%PI2)+PI2)%PI2);
     const fs=Math.floor(rawAngle/SW)%NW;
-    const snapAngle=fs*SW+SW/2;
+    let efs=fs;
+    if(WHEEL[fs]&&WHEEL[fs].key==='song_id'&&turnsSinceLastSong<4){
+      for(let d=1;d<NW;d++){const fwd=(fs+d)%NW,bwd=(fs-d+NW)%NW;if(WHEEL[fwd]&&WHEEL[fwd].key!=='song_id'){efs=fwd;break;}if(WHEEL[bwd]&&WHEEL[bwd].key!=='song_id'){efs=bwd;break;}}
+    }
+    const snapAngle=efs*SW+SW/2;
     rot=finalRot-snapAngle+rawAngle;
     draw(rot);
-    sel=fs;const seg=WHEEL[fs];
+    sel=efs;const seg=WHEEL[efs]||WHEEL[fs];
     pending=true;updateTopRow();updateWheelCursor();
     setTimeout(()=>{
       currentPts=seg.val||500;
