@@ -503,10 +503,9 @@ const NEXT_BTNS=["יעלה ויבוא השחקן הבא","לבמה – הכוכ�
 let participants=[],questions={},lyrics={},scores={},photos={},currentFont='';
 let cp=null,spinning=false,picking=false,sel=null,pending=false,Q='';
 let btnIdx=0,prevScreen='setup',editSeg=0,selSong='';
-let turnCount=0,stealAvailable=false,currentPts=0,stealAfterQ=false,isPassTurn=false,lastStealTurn=-10;
-const SONG_RESTRICTIONS={'סאלוני אל נאס':['מוחמד','עלי','נסים','האני','נאדרה'],'איילה':['נטע','שושי']};
-const SALONI_PLAYERS=['מוחמד','האני','עלי','נסים','נאדרה'];
-const NO_SONG_PLAYERS=['אסיל'];
+let turnCount=0,stealAvailable=false,currentPts=0,stealAfterQ=false,isPassTurn=false,turnsSinceLastSong=4,lastStealTurn=-10;
+const SONG_RESTRICTIONS={'סאלוני אל נאס':['מוחמד','עלי','נסים','האני','נאדרה','אסיל'],'איילה':['נטע','שושי']};
+const SALONI_PLAYERS=['מוחמד','האני','עלי','נסים','נאדרה','אסיל'];
 let turnQueue=[];
 let songQueue=[];
 let currentSong='';
@@ -631,17 +630,20 @@ function spin(){
     else{const st=Math.min((now-suspStart)/1800,1);const wobble=Math.sin(st*Math.PI*5)*(1-st)*0.06;rot=startRot+totalRot*.96+easeOut(st)*totalRot*.04+wobble;draw(rot);if(st<1)aid=requestAnimationFrame(anim);else landing(startRot+totalRot);}
   }
   function landing(finalRot){
-    rot=finalRot;draw(rot);spinning=false;
+    spinning=false;
     document.getElementById('wheelRing').classList.remove('spinning-ring');
-    const fs=Math.floor(((((-rot)%PI2)+PI2)%PI2)/SW)%NW;
+    const rawAngle=((((-finalRot)%PI2)+PI2)%PI2);
+    const fs=Math.floor(rawAngle/SW)%NW;
+    const snapAngle=fs*SW+SW/2;
+    rot=finalRot-snapAngle+rawAngle;
+    draw(rot);
     sel=fs;const seg=WHEEL[fs];
     pending=true;updateTopRow();updateWheelCursor();
     setTimeout(()=>{
       currentPts=seg.val||500;
       if(seg.key==='song_id'){
-        const noSong=NO_SONG_PLAYERS.some(n=>cp&&cp.includes(n));
-        if(!noSong){
-          turnCount++;
+        if(turnsSinceLastSong>=4){
+          turnsSinceLastSong=0;turnCount++;
           const songs=questions.song||[];
           const isSaloni=SALONI_PLAYERS.some(n=>cp&&cp.includes(n));
           const pin=isSaloni?'סאלוני אל נאס':(pinnedSongs[cp]||null);
@@ -649,13 +651,13 @@ function spin(){
           if(!isSaloni&&song&&song.includes('סאלוני אל נאס')){songQueue.push(song);song=getNextSong();}
           showSongId(song);return;
         }
-        // noSong player (אסיל): auto-pts, skip song entirely
-        turnCount++;
+        // too soon for another song: auto-pts, no question
+        turnsSinceLastSong++;turnCount++;
         if(cp){scores[cp]=(scores[cp]||0)+currentPts;saveData();showPointsPopup('+'+currentPts.toLocaleString());}
         setTimeout(()=>nextPlayer(),1500);
         return;
       }
-      turnCount++;
+      turnsSinceLastSong++;turnCount++;
       if(seg.key==='pass')isPassTurn=true;
       if(seg.key==='steal'){if(turnCount-lastStealTurn>3){stealAfterQ=true;}else{const ptsSeg=WHEEL.filter(s=>s.key==='pts');currentPts=ptsSeg[Math.floor(Math.random()*ptsSeg.length)].val||600;}}
       const isMoshik=seg.key==='moshik';
@@ -912,7 +914,7 @@ function closeAllOverlays(){
 function initGame(){
   calcCS();const wc=document.getElementById('wc');if(wc){wc.width=cs;wc.height=cs;}
   draw(rot);cp=null;spinning=false;picking=false;sel=null;pending=false;
-  turnCount=0;stealAvailable=false;currentPts=0;lastStealTurn=-10;
+  turnCount=0;stealAvailable=false;currentPts=0;turnsSinceLastSong=4;lastStealTurn=-10;
   document.getElementById('wHint').textContent='';
   updateTopRow();updateWheelCursor();
 }
@@ -939,7 +941,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   document.getElementById('editQBtn').onclick=()=>{prevScreen='setup';setES(0);showScreen('edit');};
   document.getElementById('exportBtn').onclick=exportData;
   document.getElementById('importInput').onchange=e=>{const f=e.target.files[0];if(f){importData(f);e.target.value='';}};
-  document.getElementById('resetGameBtn').onclick=()=>{if(!confirm('לאפס ניקוד וסדר תורות?'))return;scores={};turnQueue=[];songQueue=[];turnCount=0;stealAvailable=false;saveData();renderSetup();};
+  document.getElementById('resetGameBtn').onclick=()=>{if(!confirm('לאפס ניקוד וסדר תורות?'))return;scores={};turnQueue=[];songQueue=[];turnCount=0;stealAvailable=false;turnsSinceLastSong=4;saveData();renderSetup();};
   document.getElementById('startBtn').onclick=()=>{if(participants.length<2)return;showScreen('game');initGame();};
   document.getElementById('wheelRing').onclick=spin;
   document.getElementById('toSetup').onclick=()=>{if(aid)cancelAnimationFrame(aid);spinning=false;closeAllOverlays();showScreen('setup');renderSetup();};
