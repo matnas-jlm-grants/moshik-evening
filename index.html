@@ -633,7 +633,10 @@ function spin(){
     spinning=false;
     document.getElementById('wheelRing').classList.remove('spinning-ring');
     const rawAngle=((((-finalRot)%PI2)+PI2)%PI2);
-    const fs=Math.floor(rawAngle/SW)%NW;
+    let fs=Math.floor(rawAngle/SW)%NW;
+    if(WHEEL[fs].key==='song_id'&&turnsSinceLastSong<4){
+      for(let d=1;d<NW;d++){const alt=(fs+d)%NW;if(WHEEL[alt].key!=='song_id'){fs=alt;break;}}
+    }
     const snapAngle=fs*SW+SW/2;
     rot=finalRot-snapAngle+rawAngle;
     draw(rot);
