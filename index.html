@@ -632,11 +632,12 @@ function spin(){
   function landing(finalRot){
     rot=finalRot;draw(rot);spinning=false;
     document.getElementById('wheelRing').classList.remove('spinning-ring');
-    let fs=Math.floor(((((-rot)%PI2)+PI2)%PI2)/SW)%NW;
-    if(WHEEL[fs].key==='song_id'&&turnsSinceLastSong<4){
-      for(let d=1;d<NW;d++){const alt=(fs+d)%NW;if(WHEEL[alt].key!=='song_id'){fs=alt;break;}}
+    const fs=Math.floor(((((-rot)%PI2)+PI2)%PI2)/SW)%NW;
+    let efs=fs;
+    if(WHEEL[efs]&&WHEEL[efs].key==='song_id'&&turnsSinceLastSong<4){
+      for(let d=1;d<NW;d++){const alt=(efs+d)%NW;if(WHEEL[alt]&&WHEEL[alt].key!=='song_id'){efs=alt;break;}}
     }
-    sel=fs;const seg=WHEEL[fs];
+    sel=efs;const seg=WHEEL[efs]||WHEEL[fs];
     pending=true;updateTopRow();updateWheelCursor();
     setTimeout(()=>{
       currentPts=seg.val||500;
