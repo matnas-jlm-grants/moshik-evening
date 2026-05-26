@@ -285,6 +285,10 @@ audio{display:none;}
         <label class="btn" for="importInput" style="flex:1;cursor:pointer;font-size:12px;color:#B8CC8A;border-color:rgba(74,94,42,.4);text-align:center;">ייבא</label>
         <input type="file" id="importInput" accept=".json">
       </div>
+      <div style="margin-top:6px;">
+        <button class="btn" id="offlineBtn" style="width:100%;font-size:12px;color:#80DEEA;border-color:rgba(0,188,212,.3)">📱 הורד גיבוי לאופליין</button>
+      </div>
+      </div>
       <button class="btn" id="editQBtn" style="color:var(--gold3);border-color:rgba(212,160,23,.3);font-size:13px;">ערוך שאלות ומשימות</button>
       <button class="btn btn-danger" id="resetGameBtn" style="font-size:13px;">אפס משחק מחדש</button>
       <button class="btn-gold" id="startBtn">עולים על הבמה – התחל</button>
@@ -536,6 +540,31 @@ function loadData(){try{const p=localStorage.getItem('m-p');const pArr=p?JSON.pa
 function saveData(){try{localStorage.setItem('m-p',JSON.stringify(participants));localStorage.setItem('m-q',JSON.stringify(questions));localStorage.setItem('m-l',JSON.stringify(lyrics));localStorage.setItem('m-sc',JSON.stringify(scores));localStorage.setItem('m-ps',JSON.stringify(pinnedSongs));try{localStorage.setItem('m-ph',JSON.stringify(photos));}catch(e){}const b=document.getElementById('savedBadge');if(b){b.textContent='נשמר';setTimeout(()=>{b.textContent='';},1500);}}catch(e){alert('אחסון מלא');}}
 function applyFont(f){document.getElementById('body').className=f;currentFont=f;try{localStorage.setItem('m-font',f);}catch(e){}document.querySelectorAll('.fp-btn').forEach(b=>b.classList.toggle('active',b.dataset.font===f));}
 let _lastExport=0;
+async function downloadOfflineBackup(){
+  const btn=document.getElementById('offlineBtn');
+  if(btn){btn.textContent='...מכין';btn.disabled=true;}
+  try{
+    const data={participants,questions,lyrics,scores,photos,pinnedSongs,font:currentFont};
+    const safe=JSON.stringify(data).replace(/<\/script>/gi,'<\\/script>');
+    const preload=`<script>(function(){try{var d=${safe};`+
+      `localStorage.setItem('m-p',JSON.stringify(d.participants||[]));`+
+      `localStorage.setItem('m-q',JSON.stringify(d.questions||{}));`+
+      `localStorage.setItem('m-l',JSON.stringify(d.lyrics||{}));`+
+      `localStorage.setItem('m-sc',JSON.stringify(d.scores||{}));`+
+      `try{localStorage.setItem('m-ph',JSON.stringify(d.photos||{}));}catch(e){}` +
+      `localStorage.setItem('m-ps',JSON.stringify(d.pinnedSongs||{}));`+
+      `if(d.font)localStorage.setItem('m-font',d.font);`+
+      `}catch(e){}})()\x3c/script>`;
+    let html;
+    try{const r=await fetch(location.href,{cache:'reload'});html=await r.text();}
+    catch(e){html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;}
+    html=html.replace('<script>',preload+'\n<script>');
+    const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='moshik-offline-'+new Date().toISOString().slice(0,10)+'.html';a.click();
+    if(btn){btn.textContent='✓ הורד!';setTimeout(()=>{btn.textContent='📱 הורד גיבוי לאופליין';btn.disabled=false;},2500);}
+  }catch(e){alert('שגיאה: '+e.message);if(btn){btn.textContent='📱 הורד גיבוי לאופליין';btn.disabled=false;}}
+}
 function exportData(silent){const data={participants,questions,lyrics,scores,photos,clips:songClips,pinnedSongs,font:currentFont};const blob=new Blob([JSON.stringify(data)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='moshik-game-'+new Date().toISOString().slice(0,16).replace('T','-')+'.json';a.click();_lastExport=Date.now();if(!silent){const b=document.getElementById('savedBadge');if(b){b.textContent='✓ גיבוי הורד!';setTimeout(()=>{b.textContent='';},2500);}}}
 function importData(file){const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(e.target.result);if(d.participants)participants=d.participants;if(d.questions)questions=d.questions;if(d.lyrics)lyrics=d.lyrics;if(d.scores)scores=d.scores;if(d.photos){photos=d.photos;}if(d.clips){songClips=d.clips;}if(d.pinnedSongs)pinnedSongs=d.pinnedSongs;if(d.font){currentFont=d.font;applyFont(d.font);}saveData();renderSetup();alert('הנתונים יובאו!');}catch(err){alert('שגיאה בייבוא');}};r.readAsText(file);}
 async function compressPhoto(file){return new Promise(res=>{const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d'),img=new Image();img.onload=()=>{const size=280;canvas.width=size;canvas.height=size;const s=Math.min(img.width,img.height),sx=(img.width-s)/2,sy=(img.height-s)/2;ctx.drawImage(img,sx,sy,s,s,0,0,size,size);res(canvas.toDataURL('image/jpeg',.72));};img.src=URL.createObjectURL(file);});}
@@ -945,6 +974,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   document.getElementById('addPBtn').onclick=()=>{const n=(ni.value||'').trim();if(n&&!participants.includes(n)){participants.push(n);ni.value='';saveData();renderSetup();}};
   document.getElementById('editQBtn').onclick=()=>{prevScreen='setup';setES(0);showScreen('edit');};
   document.getElementById('exportBtn').onclick=exportData;
+  document.getElementById('offlineBtn').onclick=downloadOfflineBackup;
   document.getElementById('importInput').onchange=e=>{const f=e.target.files[0];if(f){importData(f);e.target.value='';}};
   document.getElementById('resetGameBtn').onclick=()=>{if(!confirm('לאפס ניקוד וסדר תורות?'))return;scores={};turnQueue=[];songQueue=[];turnCount=0;stealAvailable=false;turnsSinceLastSong=4;saveData();renderSetup();};
   document.getElementById('startBtn').onclick=()=>{if(participants.length<2)return;showScreen('game');initGame();};
